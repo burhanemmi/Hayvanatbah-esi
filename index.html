@@ -1,1 +1,66 @@
-
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hayvanat Bahçem</title>
+<style>
+body{margin:0;font-family:Arial;background:#e8f5e9;text-align:center;color:#214b2b}
+header{background:#278044;color:white;padding:20px}
+.stats{display:flex;justify-content:space-around;background:#fff;padding:15px;font-weight:bold}
+main{padding:16px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.animal{background:white;border-radius:15px;padding:18px 5px;box-shadow:0 3px 8px #0002}
+.animal .emoji{font-size:48px}
+button{background:#278044;color:white;border:0;border-radius:10px;padding:12px;margin-top:8px;font-weight:bold}
+#message{min-height:24px;font-weight:bold;margin:15px}
+</style>
+</head>
+<body>
+<header>
+<h1>🦁 Hayvanat Bahçem</h1>
+<p>Kendi hayvanat bahçeni büyüt!</p>
+</header>
+<div class="stats">
+<div>💰 Para: <span id="money">100</span></div>
+<div>🐾 Hayvan: <span id="count">0</span></div>
+</div>
+<main>
+<h2>Hayvanlarını satın al</h2>
+<div class="grid">
+<div class="animal"><div class="emoji">🐰</div><b>Tavşan</b><p>25 altın</p><button onclick="buy('Tavşan','🐰',25)">Satın al</button></div>
+<div class="animal"><div class="emoji">🐢</div><b>Kaplumbağa</b><p>40 altın</p><button onclick="buy('Kaplumbağa','🐢',40)">Satın al</button></div>
+<div class="animal"><div class="emoji">🐒</div><b>Maymun</b><p>60 altın</p><button onclick="buy('Maymun','🐒',60)">Satın al</button></div>
+<div class="animal"><div class="emoji">🦁</div><b>Aslan</b><p>100 altın</p><button onclick="buy('Aslan','🦁',100)">Satın al</button></div>
+</div>
+<h2>Benim hayvanlarım</h2>
+<div id="zoo" class="grid"></div>
+<div id="message">İlk hayvanını satın al!</div>
+<button onclick="collect()">🎟️ Ziyaretçilerden para topla</button>
+</main>
+<script>
+let money=100;
+let animals=[];
+function update(){
+document.getElementById('money').textContent=money;
+document.getElementById('count').textContent=animals.length;
+}
+function buy(name,emoji,cost){
+if(money<cost){document.getElementById('message').textContent='Yeterli altının yok! Para topla.';return;}
+money-=cost;
+animals.push({name,emoji});
+document.getElementById('zoo').innerHTML=animals.map(a=>'<div class="animal"><div class="emoji">'+a.emoji+'</div><b>'+a.name+'</b></div>').join('');
+document.getElementById('message').textContent=name+' hayvanını aldın!';
+update();
+}
+function collect(){
+if(animals.length===0){document.getElementById('message').textContent='Önce hayvan satın al!';return;}
+let earned=animals.length*15;
+money+=earned;
+document.getElementById('message').textContent='Ziyaretçiler sana '+earned+' altın kazandırdı!';
+update();
+}
+update();
+</script>
+</body>
+</html>
