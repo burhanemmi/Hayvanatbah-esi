@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Hayvanat Bahçem 3D</string>
+    <string name="title_activity_main">Hayvanat Bahçem 3D</string>
+    <string name="package_name">com.burhanemmi.hayvanatbahcesi</string>
+    <string name="custom_url_scheme">com.burhanemmi.hayvanatbahcesi</string>
+</resources>
