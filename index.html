@@ -42,27 +42,37 @@ button:active{transform:scale(.97)}
 </div>
 <div id="message">Çöplerin üzerinden geçerek topla. Büfeden satış yap ve hayvanlarını büyüt!</div>
 <div id="goal">🎯 HEDEF<br>İlk hedef: Kedi<br>🪙 1.500</div>
+
+<!-- ANA MENÜ: Hayvan fiyatları ayrı sekmeye alındı -->
 <div id="menu">
- <button onclick="goTo('kiosk')">🏪 Büfeye git</button>
- <button onclick="buyAnimal('cat')">🐈 Kedi — 1.500</button>
- <button onclick="buyAnimal('dog')">🐕 Köpek — 3.000</button>
- <button onclick="buyAnimal('monkey')">🐒 Maymun — 6.000</button>
- <button onclick="buyAnimal('hippo')">🦛 Su aygırı — 12.000</button>
- <button onclick="buyAnimal('giraffe')">🦒 Zürafa — 25.000</button>
- <button onclick="buyAnimal('elephant')">🐘 Fil — 50.000</button>
- <button onclick="buyAnimal('lion')">🦁 Aslan — 100.000</button>
- <button onclick="buyAnimal('turtle')">🐢 Kaplumbağa — 800</button>
- <button onclick="buyAnimal('rabbit')">🐇 Tavşan — 1.000</button>
- <button onclick="goTo('turtle')">📍 Kaplumbağa alanı</button>
- <button onclick="goTo('rabbit')">📍 Tavşan alanı</button>
- <button onclick="goTo('cat')">📍 Kedi alanı</button>
- <button onclick="goTo('dog')">📍 Köpek alanı</button>
- <button onclick="goTo('monkey')">📍 Maymun alanı</button>
- <button onclick="goTo('hippo')">📍 Su aygırı alanı</button>
- <button onclick="goTo('giraffe')">📍 Zürafa alanı</button>
- <button onclick="goTo('elephant')">📍 Fil alanı</button>
- <button onclick="goTo('lion')">📍 Aslan alanı</button>
+ <div id="mainMenu" style="display:flex;flex-direction:column;gap:5px">
+  <button onclick="goTo('kiosk')">🏪 Büfeye git</button>
+  <button onclick="openAnimalMenu()">🐾 Hayvanlar ve Fiyatlar</button>
+  <button onclick="goTo('turtle')">📍 Kaplumbağa alanı</button>
+  <button onclick="goTo('rabbit')">📍 Tavşan alanı</button>
+  <button onclick="goTo('cat')">📍 Kedi alanı</button>
+  <button onclick="goTo('dog')">📍 Köpek alanı</button>
+  <button onclick="goTo('monkey')">📍 Maymun alanı</button>
+  <button onclick="goTo('hippo')">📍 Su aygırı alanı</button>
+  <button onclick="goTo('giraffe')">📍 Zürafa alanı</button>
+  <button onclick="goTo('elephant')">📍 Fil alanı</button>
+  <button onclick="goTo('lion')">📍 Aslan alanı</button>
+ </div>
+
+ <div id="animalMenu" style="display:none;flex-direction:column;gap:5px">
+  <button onclick="restoreMenu()">⬅ Ana menüye dön</button>
+  <button onclick="buyAnimal('turtle')">🐢 Kaplumbağa — 800 🪙</button>
+  <button onclick="buyAnimal('rabbit')">🐇 Tavşan — 1.000 🪙</button>
+  <button onclick="buyAnimal('cat')">🐈 Kedi — 1.500 🪙</button>
+  <button onclick="buyAnimal('dog')">🐕 Köpek — 3.000 🪙</button>
+  <button onclick="buyAnimal('monkey')">🐒 Maymun — 6.000 🪙</button>
+  <button onclick="buyAnimal('hippo')">🦛 Su aygırı — 12.000 🪙</button>
+  <button onclick="buyAnimal('giraffe')">🦒 Zürafa — 25.000 🪙</button>
+  <button onclick="buyAnimal('elephant')">🐘 Fil — 50.000 🪙</button>
+  <button onclick="buyAnimal('lion')">🦁 Aslan — 100.000 🪙</button>
+ </div>
 </div>
+
 <div id="direction"><span id="arrow">⬆</span><span id="targetName">Hedef</span><br><span id="distance"></span><br><button onclick="cancelTarget()">Oku kapat</button></div>
 <div id="left"><div id="stick"></div></div>
 <div id="right">
@@ -285,7 +295,7 @@ cube(0,2.35,10.9,3.3,.55,.12,0x286243);
 cube(-1.25,1.15,10.96,1,.55,.1,0xffffff);
 cube(1.25,1.15,10.96,1,.55,.1,0xffffff);
 
-// Ziyaretçiler: rastgele erkek/kadın, saç ve yürüyüş hareketleri
+// Ziyaretçiler
 const visitors=[];
 const hairColors=[0x202020,0x17120e,0xe5bf51,0xc65a21];
 const clothes=[0xe05b45,0x3674ca,0xe7b735,0x7a4bb0,0x35a08c,0xe9e2d2];
@@ -294,18 +304,15 @@ function makePerson(x,z){
  const female=Math.random()<.5;
  const skin=[0xf0bd91,0xd9a078,0x9a6546][Math.floor(Math.random()*3)];
  const hair=hairColors[Math.floor(Math.random()*hairColors.length)];
- const body= new THREE.Group();g.add(body);
+ const body=new THREE.Group();g.add(body);
  cube(0,1,0,.38,.68,.28,clothes[Math.floor(Math.random()*clothes.length)],body);
  ball(0,1.52,.02,.25,.26,.25,skin,body);
- // Saç tepesi
  ball(0,1.73,-.015,.255,.12,.26,hair,body);
  if(female){
-  // Uzun saç: başın yanlarında ve arkasında
   ball(-.21,1.48,-.045,.09,.34,.16,hair,body);
   ball(.21,1.48,-.045,.09,.34,.16,hair,body);
   ball(0,1.39,-.16,.22,.25,.1,hair,body);
  }else{
-  // Kısa saç
   ball(0,1.63,-.02,.24,.1,.24,hair,body);
  }
  const leg1=cube(-.11,.43,0,.12,.45,.14,0x263347,body);
@@ -344,7 +351,7 @@ const products={
 };
 function say(t){document.getElementById('message').textContent=t}
 function goalText(){
- for(const t of ['cat','dog','monkey','hippo','giraffe','elephant','lion'])if(!unlocked[t])return products[t]?.name||({cat:'Kedi',dog:'Köpek',monkey:'Maymun',hippo:'Su aygırı',giraffe:'Zürafa',elephant:'Fil',lion:'Aslan'}[t])+' satın al: '+prices[t].toLocaleString('tr-TR')+' 🪙';
+ for(const t of ['cat','dog','monkey','hippo','giraffe','elephant','lion'])if(!unlocked[t])return ({cat:'Kedi',dog:'Köpek',monkey:'Maymun',hippo:'Su aygırı',giraffe:'Zürafa',elephant:'Fil',lion:'Aslan'}[t])+' satın al: '+prices[t].toLocaleString('tr-TR')+' 🪙';
  return 'Tüm hayvanları satın aldın! 🎉';
 }
 function updateHud(){
@@ -360,6 +367,17 @@ function gain(n,e){
  while(xp>=level*100){xp-=level*100;level++;say('Seviye atladın! Seviye '+level);}
  updateHud();
 }
+
+// Hayvan fiyatları menüsünü aç/kapat
+window.openAnimalMenu=function(){
+ document.getElementById('mainMenu').style.display='none';
+ document.getElementById('animalMenu').style.display='flex';
+};
+window.restoreMenu=function(){
+ document.getElementById('animalMenu').style.display='none';
+ document.getElementById('mainMenu').style.display='flex';
+};
+
 window.buyAnimal=function(type){
  if(unlocked[type]){say('Bu hayvan zaten satın alındı.');return}
  const order=['turtle','rabbit','cat','dog','monkey','hippo','giraffe','elephant','lion'];
@@ -409,7 +427,6 @@ for(const [k,h] of Object.entries(habitats))targets[k]={x:h.x,z:h.z,name:h.label
 let currentTarget=null;
 window.goTo=function(type){
  if(type==='kiosk'){
-  // Büfeye dokununca büfe içi menüsüne gir
   if(player.position.distanceTo(new THREE.Vector3(0,0,12))<7){openKiosk();return}
  }
  currentTarget=targets[type];if(!currentTarget)return;
@@ -426,7 +443,6 @@ window.closeKiosk=function(){document.getElementById('kioskScreen').style.displa
 renderer.domElement.addEventListener('dblclick',()=>{
  if(player.position.distanceTo(new THREE.Vector3(0,0,12))<7)openKiosk();
 });
-// Büfeye yaklaşınca otomatik giriş bildirimi
 let kioskHint=false;
 
 // Joystick
@@ -495,7 +511,7 @@ function animate(){
   }
  }
 
- // Otomatik çöp toplama: karakter çöpe yaklaşınca toplar
+ // Otomatik çöp toplama
  for(let i=trash.length-1;i>=0;i--){
   if(trash[i].position.distanceTo(player.position)<1.5){
    scene.remove(trash[i]);trash.splice(i,1);gain(25,15);
@@ -510,7 +526,12 @@ function animate(){
   const sx=dx*Math.cos(yaw)-dz*Math.sin(yaw);
   const sy=-dx*Math.sin(yaw)-dz*Math.cos(yaw);
   document.getElementById('arrow').style.transform='rotate('+Math.atan2(sx,sy)*180/Math.PI+'deg)';
-  if(dist<3){say(currentTarget.name+' noktasına ulaştın!');if(currentTarget.name==='Büfe')openKiosk();currentTarget=null;document.getElementById('direction').style.display='none'}
+  if(dist<3){
+   say(currentTarget.name+' noktasına ulaştın!');
+   if(currentTarget.name==='Büfe')openKiosk();
+   currentTarget=null;
+   document.getElementById('direction').style.display='none';
+  }
  }
  const kioskDist=player.position.distanceTo(new THREE.Vector3(0,0,12));
  if(kioskDist<3&&!kioskHint){say('Büfeye geldin! Büfeyi aç düğmesine bas.');kioskHint=true}
