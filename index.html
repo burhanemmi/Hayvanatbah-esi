@@ -8,19 +8,23 @@
 *{box-sizing:border-box}
 body{margin:0;overflow:hidden;background:#9bd5ee;font-family:Arial;color:white;touch-action:none}
 #game{position:fixed;inset:0}
-#top{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;gap:6px;pointer-events:none}
-.panel{background:#153e32df;padding:9px 12px;border-radius:13px;font-size:13px;box-shadow:0 3px 8px #0004}
-#message{position:absolute;top:66px;left:50%;transform:translateX(-50%);background:#163b2fe8;border-radius:12px;padding:8px 13px;text-align:center;font-size:12px;max-width:90%;pointer-events:none}
-#left{position:absolute;left:12px;bottom:25px;width:125px;height:125px;border-radius:50%;background:#ffffff32;border:2px solid #ffffff80;touch-action:none}
-#stick{position:absolute;width:54px;height:54px;border-radius:50%;background:#ffffffb8;border:3px solid white;left:33px;top:33px;pointer-events:none}
-#right{position:absolute;right:10px;bottom:20px;display:flex;flex-direction:column;gap:7px;align-items:stretch}
-button{border:0;border-radius:12px;background:#f4bd45;color:#26372c;font-weight:bold;padding:11px 13px;font-size:13px;box-shadow:0 3px 7px #0004}
+.panel{background:#153e32eF;padding:8px 10px;border-radius:12px;font-size:12px;box-shadow:0 3px 8px #0004}
+#top{position:absolute;top:7px;left:7px;right:7px;display:flex;justify-content:space-between;pointer-events:none}
+#money{font-weight:bold;color:#ffdc67}
+#message{position:absolute;left:8px;top:65px;max-width:57%;background:#153e32ed;padding:8px 10px;border-radius:10px;font-size:11px;line-height:1.3;pointer-events:none}
+#menu{position:absolute;right:7px;top:65px;width:148px;max-height:40vh;overflow:auto;display:flex;flex-direction:column;gap:5px}
+#menu button{font-size:10px;padding:8px 6px;text-align:left}
+button{border:0;border-radius:10px;background:#f4bd45;color:#26372c;font-weight:bold;padding:10px;font-size:12px;box-shadow:0 3px 7px #0004}
 button:active{transform:scale(.96)}
-.small{padding:8px 11px;background:#e8f5e9}
-#menu{position:absolute;left:8px;top:115px;display:flex;flex-direction:column;gap:5px;max-width:155px;max-height:52vh;overflow-y:auto}
-#menu button{font-size:11px;padding:9px 8px;text-align:left}
-#hint{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);font-size:10px;color:#fff;text-shadow:0 1px 3px #000;white-space:nowrap}
-#err{position:absolute;inset:20px;background:#17251e;color:white;padding:20px;display:none;overflow:auto;z-index:20}
+.small{background:#e8f5e9}
+#left{position:absolute;left:10px;bottom:20px;width:120px;height:120px;border-radius:50%;background:#ffffff32;border:2px solid #ffffff80;touch-action:none}
+#stick{position:absolute;width:52px;height:52px;border-radius:50%;background:#ffffffbd;border:3px solid white;left:32px;top:32px;pointer-events:none}
+#right{position:absolute;right:8px;bottom:14px;display:flex;flex-direction:column;gap:5px;width:116px}
+#right button{padding:9px 5px;font-size:11px}
+#hint{position:absolute;bottom:4px;left:140px;font-size:9px;color:white;text-shadow:0 1px 3px #000}
+#direction{position:absolute;right:8px;top:calc(65px + 40vh + 8px);background:#153e32ed;border-radius:12px;padding:8px;width:148px;text-align:center;font-size:11px;display:none}
+#arrow{font-size:32px;display:block;color:#ffdf59;line-height:1.2}
+#goal{position:absolute;left:8px;top:135px;background:#153e32d9;padding:7px 9px;border-radius:10px;font-size:10px;max-width:145px;pointer-events:none}
 </style>
 </head>
 <body>
@@ -29,92 +33,86 @@ button:active{transform:scale(.96)}
  <div class="panel">🌳 HAYVANAT BAHÇEM<br><span id="level">Seviye 1</span></div>
  <div class="panel">🪙 <span id="money">150</span><br>⭐ <span id="xp">0</span> XP</div>
 </div>
-<div id="message">Joystick ile yürü. Çöpleri topla, ziyaretçilere satış yap!</div>
+<div id="message">Görev: Büfeyi işlet, para kazan ve yeni hayvanlar satın al!</div>
+<div id="goal">🎯 HEDEF<br>İlk hedef: Su aygırını satın al<br>🪙 5.000</div>
 <div id="menu">
- <button onclick="unlock('hippo')">🦛 Su aygırı — 4. seviye</button>
- <button onclick="unlock('elephant')">🐘 Fil — 6. seviye</button>
- <button onclick="unlock('giraffe')">🦒 Zürafa — 8. seviye</button>
- <button onclick="unlock('lion')">🦁 Aslan — 10. seviye</button>
- <button onclick="sell()" class="small">🥤 Büfede ürün sat</button>
- <button onclick="feedHippo()" class="small">🍉 Su aygırına karpuz ver</button>
- <button onclick="collect()" class="small">🧹 Yakındaki çöpü topla</button>
+ <button onclick="goTo('kiosk')">📍 Büfeye git / yönet</button>
+ <button onclick="goTo('hippo')">📍 Su aygırı alanına git</button>
+ <button onclick="buyAnimal('hippo')">🦛 Su aygırı satın al — 5.000</button>
+ <button onclick="goTo('elephant')">📍 Fil alanına git</button>
+ <button onclick="buyAnimal('elephant')">🐘 Fil satın al — 15.000</button>
+ <button onclick="goTo('giraffe')">📍 Zürafa alanına git</button>
+ <button onclick="buyAnimal('giraffe')">🦒 Zürafa satın al — 35.000</button>
+ <button onclick="goTo('lion')">📍 Aslan alanına git</button>
+ <button onclick="buyAnimal('lion')">🦁 ASLAN — 100.000</button>
 </div>
+<div id="direction"><span id="arrow">⬆</span><span id="targetName">Hedef</span><br><span id="distance">Mesafe hesaplanıyor</span><br><button class="small" onclick="cancelTarget()">Yönlendirmeyi kapat</button></div>
 <div id="left"><div id="stick"></div></div>
 <div id="right">
- <button onclick="sell()">🥤 Satış yap</button>
- <button onclick="collect()">🧹 Çöp topla</button>
- <button onclick="feedHippo()">🍉 Karpuz</button>
+ <button onclick="sell('drink')">🥤 İçecek sat</button>
+ <button onclick="sell('snack')">🍿 Atıştırmalık sat</button>
+ <button onclick="sell('souvenir')">🎁 Hediyelik sat</button>
+ <button onclick="buyStock()">📦 Stok al</button>
+ <button onclick="upgradeKiosk()">🏪 Büfeyi geliştir</button>
+ <button onclick="care()">🧹 Bakım / temizlik</button>
  <button class="small" onclick="zoom(-2)">＋ Yakınlaş</button>
  <button class="small" onclick="zoom(2)">－ Uzaklaş</button>
 </div>
-<div id="hint">Ekranın sağ tarafında sürükle: kamerayı döndür • İki parmak: yakınlaştır</div>
-<div id="err"></div>
+<div id="hint">Sol joystick: yürü • Sağ tarafı sürükle: kamerayı döndür</div>
 
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
 
-const root=document.getElementById('game');
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(0x9bd5ee);
-scene.fog=new THREE.Fog(0x9bd5ee,55,150);
+scene.fog=new THREE.Fog(0x9bd5ee,60,150);
 const camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,300);
 const renderer=new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(innerWidth,innerHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 renderer.shadowMap.enabled=true;
-renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-root.appendChild(renderer.domElement);
+document.getElementById('game').appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xe3f6ff,0x54723a,2));
-const sun=new THREE.DirectionalLight(0xfff0d4,2.5);
+const sun=new THREE.DirectionalLight(0xfff0d4,2.4);
 sun.position.set(-30,45,25);sun.castShadow=true;
 sun.shadow.mapSize.set(1024,1024);scene.add(sun);
 
-const mat=(c,r=.85)=>new THREE.MeshStandardMaterial({color:c,roughness:r});
-const grass=mat(0x61a94b),darkGrass=mat(0x478c3c),pathMat=mat(0xc5b18c),edgeMat=mat(0x82765f),wood=mat(0x754a29),metal=mat(0x9ba9a5),white=mat(0xf0e7d5),black=mat(0x202421),green=mat(0x27753b);
+const mat=c=>new THREE.MeshStandardMaterial({color:c,roughness:.85});
 const boxGeo=new THREE.BoxGeometry(1,1,1);
 const sphereGeo=new THREE.SphereGeometry(1,16,12);
-const cylinderGeo=new THREE.CylinderGeometry(1,1,1,12);
-function mesh(geo,material,x,y,z,sx=1,sy=1,sz=1,parent=scene){
- const m=new THREE.Mesh(geo,material);m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;
+const cylGeo=new THREE.CylinderGeometry(1,1,1,12);
+function mesh(geo,m,x,y,z,sx=1,sy=1,sz=1,parent=scene){
+ const o=new THREE.Mesh(geo,typeof m==='number'?mat(m):m);
+ o.position.set(x,y,z);o.scale.set(sx,sy,sz);
+ o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;
 }
-function cube(x,y,z,sx,sy,sz,c,parent=scene){return mesh(boxGeo,typeof c==='number'?mat(c):c,x,y,z,sx,sy,sz,parent)}
-function ball(x,y,z,sx,sy,sz,c,parent=scene){return mesh(sphereGeo,typeof c==='number'?mat(c):c,x,y,z,sx,sy,sz,parent)}
-function cyl(x,y,z,rt,rb,h,c,parent=scene){return mesh(cylinderGeo,typeof c==='number'?mat(c):c,x,y,z,rt,h,rb,parent)}
-function ground(x,z,w,d,c=0x61a94b){
- const m=cube(x,-.18,z,w,.35,d,c);m.castShadow=false;return m;
-}
-ground(0,0,160,160,0x68aa4b);
-
-// Yollar: düz ve kavşaklı geniş taş yürüyüş alanları
+function cube(x,y,z,sx,sy,sz,c,p=scene){return mesh(boxGeo,c,x,y,z,sx,sy,sz,p)}
+function ball(x,y,z,sx,sy,sz,c,p=scene){return mesh(sphereGeo,c,x,y,z,sx,sy,sz,p)}
+function cyl(x,y,z,r,h,c,p=scene){return mesh(cylGeo,c,x,y,z,r,h,r,p)}
+cube(0,-.18,0,160,.35,160,0x68aa4b);
 function road(x,z,w,d){
- cube(x,.015,z,w,.12,d,pathMat);
- for(let side of [-1,1]){
-  if(w>d) cube(x, .035,z+side*(d/2),w,.12,.18,edgeMat);
-  else cube(x+side*(w/2),.035,z,.18,.12,d,edgeMat);
- }
+ cube(x,.015,z,w,.12,d,0xc5b18c);
+ if(w>d){cube(x,.035,z-d/2,w,.12,.16,0x82765f);cube(x,.035,z+d/2,w,.12,.16,0x82765f);}
+ else{cube(x-w/2,.035,z,.16,.12,d,0x82765f);cube(x+w/2,.035,z,.16,.12,d,0x82765f);}
 }
 road(0,0,7,100);road(-25,0,48,5);road(25,0,48,5);
 road(-25,-25,5,38);road(25,-25,5,38);
-road(-25,25,5,38);road(25,25,5,38);
-road(0,-45,55,4);
-for(let i=-45;i<=45;i+=4) cube(0,.09,i,.09,.015,6,0xb5a17d);
+road(-25,25,5,38);road(25,25,5,38);road(0,-45,55,4);
 
-// Dekoratif ağaçlar
 function tree(x,z,s=1){
  const g=new THREE.Group();scene.add(g);g.position.set(x,0,z);
- mesh(cylinderGeo,mat(0x654324),0,1.15,0,.25,2.3,.25,g);
+ mesh(cylGeo,0x654324,0,1.15,0,.25,2.3,.25,g);
  ball(0,2.5,0,1.1,1.25,1.1,0x26783c,g);
  ball(-.55,2.2,.1,.7,.8,.7,0x348b40,g);
  ball(.55,2.35,-.1,.75,.8,.75,0x398e43,g);
  g.scale.setScalar(s);
 }
-for(let i=0;i<65;i++){
+for(let i=0;i<60;i++){
  const x=(Math.random()-.5)*145,z=(Math.random()-.5)*145;
- if(Math.abs(x)<8||Math.abs(z)<8)continue;
- tree(x,z,.65+Math.random()*.55);
+ if(Math.abs(x)<9||Math.abs(z)<8)continue;
+ tree(x,z,.65+Math.random()*.5);
 }
 
-// Ahşap çitli yaşam alanları
 const habitats={
  zebra:{x:-25,z:-25,w:17,d:15,label:'Zebra'},
  monkey:{x:25,z:-25,w:17,d:15,label:'Maymun'},
@@ -123,126 +121,117 @@ const habitats={
  giraffe:{x:-48,z:0,w:15,d:17,label:'Zürafa'},
  lion:{x:48,z:0,w:15,d:17,label:'Aslan'}
 };
-const animalGroups={};
 function fence(h){
- const {x,z,w,d}=h;
- const y=.65;
- for(const side of [-1,1]){
-  for(let i=0;i<=Math.floor(w/1.3);i++){
-   const xx=x-w/2+i*w/Math.floor(w/1.3);
-   cube(xx,y,z+side*d/2,.16,1.3,.16,wood);
+ const {x,z,w,d}=h,y=.65;
+ for(const s of [-1,1]){
+  for(let i=0;i<=12;i++){
+   const xx=x-w/2+i*w/12;
+   cube(xx,y,z+s*d/2,.14,1.3,.14,0x754a29);
   }
-  cube(x,y-.08,z+side*d/2,w,.14,.16,wood);
-  cube(x,y+.42,z+side*d/2,w,.13,.16,wood);
+  cube(x,y-.08,z+s*d/2,w,.14,.16,0x754a29);
+  cube(x,y+.42,z+s*d/2,w,.13,.16,0x754a29);
  }
- for(const side of [-1,1]){
-  for(let i=0;i<=Math.floor(d/1.3);i++){
-   const zz=z-d/2+i*d/Math.floor(d/1.3);
-   cube(x+side*w/2,y,zz,.16,1.3,.16,wood);
+ for(const s of [-1,1]){
+  for(let i=0;i<=10;i++){
+   const zz=z-d/2+i*d/10;
+   cube(x+s*w/2,y,zz,.14,1.3,.14,0x754a29);
   }
-  cube(x+side*w/2,y-.08,z,.16,.14,d,wood);
-  cube(x+side*w/2,y+.42,z,.16,.13,d,wood);
+  cube(x+s*w/2,y,z,.16,.14,d,0x754a29);
+  cube(x+s*w/2,y+.42,z,.13,.13,d,0x754a29);
  }
  cube(x,.025,z,w-.5,.08,d-.5,0x83b65a);
- const sign=cube(x,.9,z-d/2-1,3,.9,.16,0x286243);
- return sign;
+ cube(x,.9,z-d/2-1,3,.9,.16,0x286243);
 }
-for(const [k,h] of Object.entries(habitats))fence(h);
+Object.values(habitats).forEach(fence);
 
-// Su aygırı havuzu ve şelalesi
+// Su aygırı havuzu ve küçük şelale
 const hip=habitats.hippo;
-mesh(new THREE.CylinderGeometry(1,1,1,32),mat(0x329bc2,.25),hip.x,0.04,hip.z,6,.13,4);
+mesh(new THREE.CylinderGeometry(1,1,1,32),mat(0x329bc2),hip.x,.04,hip.z,6,.13,4);
 cube(hip.x+5,.9,hip.z-5,.7,1.7,.7,0x8b8f91);
-const water=mesh(new THREE.PlaneGeometry(2.3,2.5),new THREE.MeshStandardMaterial({color:0x65d9f3,transparent:true,opacity:.8,side:THREE.DoubleSide}),hip.x+4.6,1.1,hip.z-4.6);
-water.rotation.x=.12;
+const waterfall=mesh(new THREE.PlaneGeometry(2.3,2.5),new THREE.MeshStandardMaterial({color:0x65d9f3,transparent:true,opacity:.8,side:THREE.DoubleSide}),hip.x+4.6,1.1,hip.z-4.6);
+waterfall.rotation.x=.12;
 cube(hip.x+4.6,.13,hip.z-3.1,.3,.2,3,0x329bc2);
-for(let i=0;i<18;i++){
- const rock=ball(hip.x+Math.random()*10-5,.18,hip.z+Math.random()*9-4.5,.35,.23,.3,0x888e88);
-}
+for(let i=0;i<18;i++)ball(hip.x+Math.random()*10-5,.18,hip.z+Math.random()*9-4.5,.35,.23,.3,0x888e88);
+
 function makeAnimal(type,x,z){
  const g=new THREE.Group();scene.add(g);g.position.set(x,0,z);
- const fur={zebra:0xf0eee4,monkey:0x9b5b32,hippo:0x817b89,elephant:0x898f93,giraffe:0xd7a84b,lion:0xd6a044};
- const color=fur[type]||0xffffff;
- const body=ball(0,1,0, type==='elephant'?1.3:1,.65,.55,color,g);
- const head=ball(0,1.55,.63,.48,.46,.43,color,g);
- const eyeMat=mat(0x171717);
- for(let side of [-1,1]){
-  ball(side*.19,1.65,.98,.07,.07,.05,white,g);
-  ball(side*.19,1.65,1.025,.035,.04,.025,eyeMat,g);
- }
- for(let side of [-1,1]){
-  const leg=cube(side*.58,.48,.05,.22,.8,.24,color,g);
+ const colors={zebra:0xf0eee4,monkey:0x9b5b32,hippo:0x817b89,elephant:0x898f93,giraffe:0xd7a84b,lion:0xd6a044};
+ const c=colors[type]||0xffffff;
+ ball(0,1,0,type==='elephant'?1.3:1,.65,.55,c,g);
+ ball(0,1.55,.63,.48,.46,.43,c,g);
+ for(const s of [-1,1]){
+  ball(s*.19,1.65,.98,.07,.07,.05,0xf0e7d5,g);
+  ball(s*.19,1.65,1.025,.035,.04,.025,0x171717,g);
+  cube(s*.58,.48,.05,.22,.8,.24,c,g);
  }
  if(type==='zebra'){
-  for(let i=-3;i<=3;i++)cube(i*.22,1.05,.49,.07,.8,.05,black,g);
-  for(let i=0;i<3;i++)cube(-.25+i*.25,1.6,.85,.1,.45,.08,black,g);
+  for(let i=-3;i<=3;i++)cube(i*.22,1.05,.49,.07,.8,.05,0x202421,g);
  }
  if(type==='monkey'){
-  ball(0,1.95,.8,.23,.24,.22,0x9b5b32,g);
+  ball(0,1.95,.8,.23,.24,.22,c,g);
   const tail=mesh(new THREE.TorusGeometry(.45,.07,8,18,Math.PI*1.5),mat(0x714124),-.65,.85,-.3,1,1,1,g);
   tail.rotation.y=1.2;
  }
  if(type==='hippo'){
   ball(0,1.35,1.02,.5,.25,.4,0x918a98,g);
-  ball(-.24,1.78,.85,.12,.12,.12,0x817b89,g);
-  ball(.24,1.78,.85,.12,.12,.12,0x817b89,g);
+  ball(-.24,1.78,.85,.12,.12,.12,c,g);ball(.24,1.78,.85,.12,.12,.12,c,g);
  }
  if(type==='elephant'){
-  ball(0,1.55,1,.52,.4,.45,color,g);
-  const trunk=cyl(0,1.08,1.35,.17,.22,.85,color,g);trunk.rotation.x=.2;
-  for(let s of [-1,1])ball(s*.55,1.5,.6,.34,.4,.16,0x9da2a4,g);
-  for(let s of [-1,1])cyl(s*.5,.65,.1,.24,.24,.8,color,g);
+  ball(0,1.55,1,.52,.4,.45,c,g);
+  const trunk=cyl(0,1.08,1.35,.17,.85,c,g);trunk.rotation.x=.2;
+  for(const s of [-1,1])ball(s*.55,1.5,.6,.34,.4,.16,0x9da2a4,g);
  }
  if(type==='giraffe'){
-  cyl(0,2.05,.45,.22,.29,1.6,color,g);
-  ball(0,2.85,.7,.34,.35,.32,color,g);
-  for(let s of [-1,1]){cyl(s*.19,3.13,.68,.045,.05,.28,0x7a542e,g);ball(s*.19,3.28,.68,.09,.08,.09,0x7a542e,g);}
+  cyl(0,2.05,.45,.25,1.6,c,g);ball(0,2.85,.7,.34,.35,.32,c,g);
+  for(const s of [-1,1]){cyl(s*.19,3.13,.68,.05,.28,0x7a542e,g);ball(s*.19,3.28,.68,.09,.08,.09,0x7a542e,g);}
   for(let i=0;i<8;i++)ball((Math.random()-.5)*1.4,1.15+Math.random()*.45,(Math.random()-.5)*.65,.11,.12,.1,0x8e582a,g);
  }
  if(type==='lion'){
   ball(0,1.6,.72,.58,.55,.28,0x9a5b24,g);
-  ball(0,1.58,.95,.36,.35,.32,0xd6a044,g);
-  for(let s of [-1,1])ball(s*.19,1.68,1.23,.05,.05,.04,black,g);
+  ball(0,1.58,.95,.36,.35,.32,c,g);
  }
  g.userData.type=type;return g;
 }
 makeAnimal('zebra',-25,-25);
 makeAnimal('monkey',25,-25);
-let unlocked={zebra:true,monkey:true,hippo:false,elephant:false,giraffe:false,lion:false};
-const prices={hippo:100,elephant:220,giraffe:350,lion:600};
+
+const unlocked={zebra:true,monkey:true,hippo:false,elephant:false,giraffe:false,lion:false};
+const prices={hippo:5000,elephant:15000,giraffe:35000,lion:100000};
 const levels={hippo:4,elephant:6,giraffe:8,lion:10};
+const animalGroups={};
 function spawnUnlocked(type){
- const h=habitats[type];if(!h)return;
+ const h=habitats[type];
  if(animalGroups[type])scene.remove(animalGroups[type]);
  animalGroups[type]=makeAnimal(type,h.x,h.z);
 }
+
+// Oyuncu
 const player=new THREE.Group();scene.add(player);
-const shirt=mat(0x246fe5),skin=mat(0xf0bd91),pants=mat(0x253b56);
-ball(0,1.5,0,.34,.35,.3,skin,player);
-cube(0,.95,0,.55,.8,.32,shirt,player);
-cube(-.16,.32,0,.17,.55,.2,pants,player);
-cube(.16,.32,0,.17,.55,.2,pants,player);
-const backpack=cube(0,1.03,-.24,.4,.45,.16,0x9d5d2b,player);
+ball(0,1.5,0,.34,.35,.3,0xf0bd91,player);
+cube(0,.95,0,.55,.8,.32,0x246fe5,player);
+cube(-.16,.32,0,.17,.55,.2,0x253b56,player);
+cube(.16,.32,0,.17,.55,.2,0x253b56,player);
+cube(0,1.03,-.24,.4,.45,.16,0x9d5d2b,player);
 player.position.set(0,0,10);
 
-// Büfe
+// Daha gelişmiş büfe
 cube(0,.9,12,4,1.8,2,0xf2d9a0);
 cube(0,1.65,12,4.5,.25,2.4,0x267447);
 cube(0,2.15,12,.18,.65,.18,0xe6c74b);
+cube(0,2.35,10.9,3.3,.55,.12,0x286243);
 cube(-1.25,1.15,10.96,1,.55,.1,0xffffff);
-const kioskSign=cube(0,2.35,10.9,3.3,.55,.12,0x286243);
+cube(1.25,1.15,10.96,1,.55,.1,0xffffff);
 
-// Ziyaretçiler ve yürüyüş rotası
 const visitors=[],trash=[];
 function makePerson(x,z){
  const g=new THREE.Group();scene.add(g);g.position.set(x,0,z);
  const colors=[0xe05b45,0x3674ca,0xe7b735,0x7a4bb0,0x35a08c];
- const c=colors[Math.floor(Math.random()*colors.length)];
- cube(0,1,0,.38,.68,.28,c,g);
- ball(0,1.52,.02,.25,.26,.25,skin,g);
+ cube(0,1,0,.38,.68,.28,colors[Math.floor(Math.random()*colors.length)],g);
+ ball(0,1.52,.02,.25,.26,.25,0xf0bd91,g);
  cube(-.11,.43,0,.12,.45,.14,0x263347,g);
  cube(.11,.43,0,.12,.45,.14,0x263347,g);
- g.userData.step=Math.random()*5;
+ g.userData.drop=10+Math.random()*15;
+ g.userData.speed=.8+Math.random()*.6;
  return g;
 }
 const route=[
@@ -256,75 +245,142 @@ const route=[
 for(let i=0;i<12;i++){
  const p=makePerson((Math.random()-.5)*3,5+Math.random()*7);
  p.userData.routeIndex=Math.floor(Math.random()*route.length);
- p.userData.speed=.8+Math.random()*.6;
- p.userData.drop=Math.random()*15+10;
  visitors.push(p);
 }
 function dropTrash(x,z){
  const g=new THREE.Group();scene.add(g);g.position.set(x,.12,z);
- const paper=cube(0,0,0,.3,.08,.22,Math.random()>.5?0xded9b8:0xc94337,g);
+ cube(0,0,0,.3,.08,.22,Math.random()>.5?0xded9b8:0xc94337,g);
  trash.push(g);
 }
-let money=150,xp=0,level=1;
+
+// Para, deneyim, büfe stoku ve görevler
+let money=150,xp=0,level=1,kioskLevel=1;
+const stock={drink:5,snack:0,souvenir:0};
+const product={
+ drink:{name:'İçecek',pack:50,price:35},
+ snack:{name:'Atıştırmalık',pack:100,price:70},
+ souvenir:{name:'Hediyelik',pack:250,price:160}
+};
 function updateHud(){
  document.getElementById('money').textContent=money;
  document.getElementById('xp').textContent=xp;
  document.getElementById('level').textContent='Seviye '+level;
+ document.getElementById('goal').innerHTML=
+ '🎯 HEDEF<br>'+goalText()+'<br>🏪 Büfe seviye '+kioskLevel+
+ '<br>🥤 '+stock.drink+' | 🍿 '+stock.snack+' | 🎁 '+stock.souvenir;
 }
-function gain(n,experience){
- money+=n;xp+=experience;
- while(xp>=level*100){xp-=level*100;level++;say('Yeni seviye! Artık seviye '+level+' oldun.');}
- updateHud();
+function goalText(){
+ if(!unlocked.hippo)return 'Su aygırı: 5.000 🪙';
+ if(!unlocked.elephant)return 'Fil: 15.000 🪙';
+ if(!unlocked.giraffe)return 'Zürafa: 35.000 🪙';
+ if(!unlocked.lion)return 'SON HEDEF: Aslan 100.000 🪙';
+ return 'BAŞARDIN! Tüm hayvanlar senin!';
 }
 function say(t){document.getElementById('message').textContent=t;}
-window.unlock=function(type){
- if(unlocked[type]){say('Bu hayvanın kilidi zaten açılmış!');return;}
- if(type==='elephant'&&!unlocked.hippo){say('Önce su aygırını açmalısın!');return;}
- if(type==='giraffe'&&!unlocked.elephant){say('Önce fili açmalısın!');return;}
- if(type==='lion'&&!unlocked.giraffe){say('Aslan son hayvan! Önce zürafayı açmalısın.');return;}
- if(level<levels[type]){say(type+' için seviye '+levels[type]+' gerekiyor. Şu an seviye '+level+'.');return;}
- if(money<prices[type]){say('Yeterli paran yok. Gerekli: '+prices[type]+' 🪙');return;}
+function gain(n,experience){
+ money+=n;xp+=experience;
+ while(xp>=level*100){xp-=level*100;level++;say('Seviye atladın! Yeni seviye: '+level);}
+ updateHud();
+}
+window.buyAnimal=function(type){
+ if(unlocked[type]){say('Bu hayvan zaten satın alınmış.');return;}
+ if(type==='elephant'&&!unlocked.hippo){say('Önce su aygırını satın almalısın.');return;}
+ if(type==='giraffe'&&!unlocked.elephant){say('Önce fili satın almalısın.');return;}
+ if(type==='lion'&&!unlocked.giraffe){say('Aslan son hedeftir. Önce zürafayı satın al.');return;}
+ if(level<levels[type]){say('Bu hayvan için seviye '+levels[type]+' gerekiyor. Şu an: '+level);return;}
+ if(money<prices[type]){say('Yeterli para yok! Gerekli: '+prices[type]+' 🪙. Büfeden satış yap ve çöpleri topla.');return;}
  money-=prices[type];unlocked[type]=true;spawnUnlocked(type);updateHud();
- say('Harika! '+habitats[type].label+' yaşam alanı açıldı!');
+ say('🎉 '+habitats[type].label+' satın alındı! Artık bakımını yapabilirsin.');
+ goTo(type);
+};
+window.buyStock=function(){
+ if(player.position.distanceTo(new THREE.Vector3(0,0,12))>7){say('Stok satın almak için büfeye yaklaş.');goTo('kiosk');return;}
+ const options=['drink','snack','souvenir'];
+ let type=options.find(k=>stock[k]===0)||'drink';
+ if(money<product[type].pack){say(product[type].name+' stoku için '+product[type].pack+' 🪙 gerekiyor.');return;}
+ money-=product[type].pack;stock[type]+=10;updateHud();
+ say('📦 10 adet '+product[type].name+' aldın. Büfende satışa hazır!');
+};
+window.sell=function(type){
+ if(player.position.distanceTo(new THREE.Vector3(0,0,12))>7){say('Satış için büfeye yaklaşmalısın.');goTo('kiosk');return;}
+ if(stock[type]<=0){say('Bu ürünün stoğu bitti. Büfeye yaklaş ve stok satın al.');return;}
+ stock[type]--;
+ const earned=Math.round(product[type].price*(1+(kioskLevel-1)*.35));
+ gain(earned,20);
+ say('Satış başarılı! '+product[type].name+' sattın: +'+earned+' 🪙');
+};
+window.upgradeKiosk=function(){
+ if(player.position.distanceTo(new THREE.Vector3(0,0,12))>7){say('Büfeyi geliştirmek için yanına git.');goTo('kiosk');return;}
+ const cost=kioskLevel*1000;
+ if(money<cost){say('Büfe geliştirmesi '+cost+' 🪙. Önce satış yapmalısın.');return;}
+ money-=cost;kioskLevel++;
+ gain(0,50);
+ say('🏪 Büfe seviye '+kioskLevel+' oldu! Ürünlerden daha fazla kazanacaksın.');
+};
+window.care=function(){
+ let nearest=null,dist=Infinity;
+ for(const type of Object.keys(animalGroups)){
+  const h=habitats[type],d=player.position.distanceTo(new THREE.Vector3(h.x,0,h.z));
+  if(d<dist){dist=d;nearest=type;}
+ }
+ if(!nearest||dist>10){say('Bakım yapmak için satın aldığın bir hayvanın alanına yaklaş.');return;}
+ if(!unlocked[nearest]){say('Önce bu hayvanı satın almalısın.');return;}
+ const cost={zebra:100,monkey:100,hippo:250,elephant:400,giraffe:500,lion:1000}[nearest];
+ if(money<cost){say('Bakım için '+cost+' 🪙 gerekiyor.');return;}
+ money-=cost;gain(0,60);
+ say('🧹 '+habitats[nearest].label+' bakımı tamamlandı! -'+cost+' 🪙, +60 XP');
 };
 window.collect=function(){
- let best=-1,dist=3.2;
+ let best=-1,dist=3.5;
  trash.forEach((t,i)=>{const d=t.position.distanceTo(player.position);if(d<dist){dist=d;best=i;}});
- if(best<0){say('Yakınında çöp yok. Çöplere yaklaş ve tekrar bas.');return;}
- scene.remove(trash[best]);trash.splice(best,1);gain(25,35);say('Çöp topladın! +25 🪙 ve +35 XP');
-};
-window.sell=function(){
- const d=player.position.distanceTo(new THREE.Vector3(0,0,12));
- if(d>6){say('Satış yapmak için girişteki büfeye yaklaş!');return;}
- gain(15,20);say('Ziyaretçiye içecek sattın! +15 🪙 ve +20 XP');
-};
-window.feedHippo=function(){
- if(!unlocked.hippo){say('Önce su aygırının kilidini açmalısın.');return;}
- const h=habitats.hippo;
- if(player.position.distanceTo(new THREE.Vector3(h.x,0,h.z))>9){say('Karpuz vermek için su aygırının alanına yaklaş!');return;}
- gain(10,15);say('🍉 Su aygırı karpuzunu yedi! +10 🪙 ve +15 XP');
+ if(best<0){say('Çöp toplamak için yerdeki çöplere yaklaş.');return;}
+ scene.remove(trash[best]);trash.splice(best,1);gain(25,35);
+ say('Çöp topladın! +25 🪙 ve +35 XP');
 };
 
-// Mobil joystick
+// Dokunulan hedefe yön oku ile rehberlik
+const targets={
+ kiosk:{x:0,z:12,name:'Büfe'},
+ zebra:{x:-25,z:-25,name:'Zebra alanı'},
+ monkey:{x:25,z:-25,name:'Maymun alanı'},
+ hippo:{x:-25,z:25,name:'Su aygırı alanı'},
+ elephant:{x:25,z:25,name:'Fil alanı'},
+ giraffe:{x:-48,z:0,name:'Zürafa alanı'},
+ lion:{x:48,z:0,name:'Aslan alanı'}
+};
+let currentTarget=null;
+window.goTo=function(type){
+ currentTarget=targets[type];
+ if(!currentTarget)return;
+ document.getElementById('direction').style.display='block';
+ document.getElementById('targetName').textContent='➡ '+currentTarget.name;
+ say(currentTarget.name+' için sarı oku takip et.');
+};
+window.cancelTarget=function(){
+ currentTarget=null;
+ document.getElementById('direction').style.display='none';
+ say('Yönlendirme kapatıldı.');
+};
+
+// Joystick
 const pad=document.getElementById('left'),stick=document.getElementById('stick');
 let joy={x:0,y:0},joyOn=false,joyId=null;
 function joyMove(e){
  const r=pad.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
- let dx=e.clientX-cx,dy=e.clientY-cy,len=Math.hypot(dx,dy),max=40;
+ let dx=e.clientX-cx,dy=e.clientY-cy,len=Math.hypot(dx,dy),max=38;
  if(len>max){dx*=max/len;dy*=max/len;}
  joy.x=dx/max;joy.y=dy/max;
- stick.style.left=(33+dx)+'px';stick.style.top=(33+dy)+'px';
+ stick.style.left=(32+dx)+'px';stick.style.top=(32+dy)+'px';
 }
 pad.addEventListener('pointerdown',e=>{e.preventDefault();joyOn=true;joyId=e.pointerId;pad.setPointerCapture(e.pointerId);joyMove(e);});
 pad.addEventListener('pointermove',e=>{if(joyOn&&e.pointerId===joyId)joyMove(e);});
-function endJoy(){joyOn=false;joy.x=joy.y=0;stick.style.left='33px';stick.style.top='33px';}
+function endJoy(){joyOn=false;joy.x=joy.y=0;stick.style.left='32px';stick.style.top='32px';}
 pad.addEventListener('pointerup',endJoy);pad.addEventListener('pointercancel',endJoy);
 
-// Kamera döndürme, fare sürükleme ve iki parmakla zoom
+// Kamera kontrolü
 let yaw=0,camDist=10,drag=false,lastX=0,lastY=0;
-let pinchStart=0,pinchDist=0;
 renderer.domElement.addEventListener('pointerdown',e=>{
- if(e.clientX<155&&e.clientY>innerHeight-170)return;
+ if(e.clientX<145&&e.clientY>innerHeight-160)return;
  drag=true;lastX=e.clientX;lastY=e.clientY;
 });
 window.addEventListener('pointerup',()=>drag=false);
@@ -334,71 +390,49 @@ window.addEventListener('pointermove',e=>{
  camDist=Math.max(5,Math.min(22,camDist+(e.clientY-lastY)*.025));
  lastX=e.clientX;lastY=e.clientY;
 });
-renderer.domElement.addEventListener('touchstart',e=>{
- if(e.touches.length===2){pinchStart=1;pinchDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);}
-},{passive:true});
-renderer.domElement.addEventListener('touchmove',e=>{
- if(e.touches.length===2&&pinchStart){
- const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
- camDist=Math.max(5,Math.min(22,camDist+(pinchDist-d)*.025));pinchDist=d;
- }
-},{passive:true});
-renderer.domElement.addEventListener('touchend',()=>pinchStart=0);
 window.zoom=function(n){camDist=Math.max(5,Math.min(22,camDist+n));};
 
-// Ziyaretçi takibi
-let follow=false;
-const followButton=document.createElement('button');
-followButton.textContent='👥 Ziyaretçiyi takip et';
-followButton.style.position='absolute';followButton.style.right='10px';followButton.style.top='110px';
-document.body.appendChild(followButton);
-followButton.onclick=()=>{follow=!follow;followButton.textContent=follow?'👤 Kendini takip et':'👥 Ziyaretçiyi takip et';say(follow?'Ziyaretçileri takip ediyorsun.':'Oyuncuya geri döndün.');};
-
-let lastDrop=0;
 function animate(){
  requestAnimationFrame(animate);
  const dt=Math.min(clock.getDelta(),.04);
  const forward=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
  const right=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
  const move=new THREE.Vector3();
- move.addScaledVector(forward,-joy.y);
- move.addScaledVector(right,joy.x);
- if(move.lengthSq()>0){
-  move.normalize();player.position.addScaledVector(move,dt*7);
-  player.rotation.y=Math.atan2(move.x,move.z);
- }
+ move.addScaledVector(forward,-joy.y);move.addScaledVector(right,joy.x);
+ if(move.lengthSq()>0){move.normalize();player.position.addScaledVector(move,dt*7);player.rotation.y=Math.atan2(move.x,move.z);}
  player.position.x=THREE.MathUtils.clamp(player.position.x,-73,73);
  player.position.z=THREE.MathUtils.clamp(player.position.z,-73,73);
 
- const t=performance.now()*.001;
- water.position.y=1.1+Math.sin(t*3)*.04;
- for(let i=0;i<visitors.length;i++){
-  const v=visitors[i];
-  let target=route[v.userData.routeIndex];
-  const dx=target.x-v.position.x,dz=target.z-v.position.z;
-  const d=Math.hypot(dx,dz);
-  if(d<1.3){v.userData.routeIndex=(v.userData.routeIndex+1)%route.length;}
-  else{
-   v.position.x+=dx/d*dt*v.userData.speed;
-   v.position.z+=dz/d*dt*v.userData.speed;
-   v.rotation.y=Math.atan2(dx,dz);
-  }
+ if(currentTarget){
+  const dx=currentTarget.x-player.position.x,dz=currentTarget.z-player.position.z;
+  const dist=Math.hypot(dx,dz);
+  document.getElementById('distance').textContent='Mesafe: '+Math.round(dist)+' metre';
+  // Ok, kameranın baktığı yöne göre döner
+  const sx=dx*Math.cos(yaw)-dz*Math.sin(yaw);
+  const sy=-dx*Math.sin(yaw)-dz*Math.cos(yaw);
+  document.getElementById('arrow').style.transform='rotate('+Math.atan2(sx,sy)*180/Math.PI+'deg)';
+  if(dist<3)say(currentTarget.name+' noktasına ulaştın!');
+ }
+
+ waterfall.position.y=1.1+Math.sin(performance.now()*.003)*.04;
+ for(const v of visitors){
+  const target=route[v.userData.routeIndex];
+  const dx=target.x-v.position.x,dz=target.z-v.position.z,d=Math.hypot(dx,dz);
+  if(d<1.3)v.userData.routeIndex=(v.userData.routeIndex+1)%route.length;
+  else{v.position.x+=dx/d*dt*v.userData.speed;v.position.z+=dz/d*dt*v.userData.speed;v.rotation.y=Math.atan2(dx,dz);}
   v.userData.drop-=dt;
   if(v.userData.drop<=0){
    if(Math.random()<.6)dropTrash(v.position.x+(Math.random()-.5),v.position.z+(Math.random()-.5));
    v.userData.drop=15+Math.random()*20;
   }
  }
- // Kamerayı oyuncuya veya ziyaretçiye yumuşakça bağla
- let targetPos=player.position;
- if(follow&&visitors.length)targetPos=visitors[0].position;
  const desired=new THREE.Vector3(
- targetPos.x+Math.sin(yaw)*camDist,
- targetPos.y+camDist*.75+2,
- targetPos.z+Math.cos(yaw)*camDist
+ player.position.x+Math.sin(yaw)*camDist,
+ player.position.y+camDist*.75+2,
+ player.position.z+Math.cos(yaw)*camDist
  );
  camera.position.lerp(desired,.12);
- camera.lookAt(targetPos.x,targetPos.y+1,targetPos.z);
+ camera.lookAt(player.position.x,player.position.y+1,player.position.z);
  renderer.render(scene,camera);
 }
 const clock=new THREE.Clock();
