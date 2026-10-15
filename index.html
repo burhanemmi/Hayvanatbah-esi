@@ -3,58 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Hayvanat Bahçesi</title>
+<title>Hayvanat Bahçem</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans-serif;background:#83c95e;touch-action:none}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#85c963;font-family:Arial,sans-serif;touch-action:none}
 #game{position:fixed;inset:0;width:100%;height:100%;display:block}
-button{border:0;border-radius:10px;padding:10px 12px;background:#fff;color:#18351c;font-weight:bold;font-size:14px;cursor:pointer;touch-action:manipulation}
-button:active{transform:scale(.96)}
-#hud{position:fixed;top:7px;left:7px;right:58px;display:flex;gap:6px;flex-wrap:wrap;z-index:5;pointer-events:none}
-.stat{padding:7px 10px;border-radius:10px;background:#123d2bd9;color:white;font-size:13px;font-weight:bold;box-shadow:0 2px 6px #0003}
-#menuToggle{position:fixed;z-index:12;top:7px;right:7px;width:46px;height:43px;font-size:24px;padding:0;background:#fff;box-shadow:0 2px 8px #0004}
-#menuPanel{display:none;position:fixed;z-index:11;top:56px;right:7px;width:min(310px,86vw);max-height:72vh;overflow-y:auto;background:#fffffff2;border-radius:15px;padding:12px;box-shadow:0 5px 20px #0005;touch-action:pan-y}
+button{border:0;border-radius:10px;padding:10px;background:#eaf5e4;color:#183c25;font-weight:bold;font-size:13px;cursor:pointer;touch-action:manipulation}
+button:active{transform:scale(.97)}
+#hud{position:fixed;z-index:4;top:6px;left:6px;display:flex;gap:5px;pointer-events:none}
+.stat{background:#16452de8;color:white;padding:7px 9px;border-radius:9px;font-size:12px;font-weight:bold}
+#menuToggle{position:fixed;z-index:12;right:7px;top:7px;width:43px;height:42px;font-size:23px;padding:0;background:white;box-shadow:0 2px 8px #0004}
+#menuPanel{display:none;position:fixed;z-index:11;right:7px;top:55px;width:min(300px,86vw);max-height:75vh;overflow-y:auto;background:#fffffff2;border-radius:14px;padding:11px;box-shadow:0 4px 20px #0005;touch-action:pan-y}
 #menuPanel.open{display:block}
-.menuTitle{font-size:17px;font-weight:bold;margin:3px 0 9px;color:#174a2a}
-.menuGroup{border-top:1px solid #ddd;padding-top:8px;margin-top:8px}
-.menuGroup h3{font-size:13px;margin:0 0 7px;color:#47624a}
-.menuButtons{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.menuButtons button{font-size:12px;padding:9px 5px;background:#e6f4df}
-#message{position:fixed;left:50%;top:57px;transform:translateX(-50%);max-width:75vw;background:#173d2ce8;color:#fff;padding:8px 12px;border-radius:12px;font-size:13px;text-align:center;z-index:4;pointer-events:none}
-#goal{position:fixed;left:8px;top:53px;max-width:190px;background:#fffde8e8;color:#25432a;border-radius:10px;padding:7px 9px;font-size:12px;z-index:3;pointer-events:none}
-#joystick{position:fixed;left:18px;bottom:18px;width:108px;height:108px;border-radius:50%;background:#ffffff70;border:3px solid #ffffffb0;z-index:6;touch-action:none}
-#stick{position:absolute;width:45px;height:45px;left:29px;top:29px;border-radius:50%;background:#1c6b39dd;border:3px solid #fff}
-#actions{position:fixed;right:13px;bottom:17px;display:flex;flex-direction:column;gap:8px;z-index:6}
-#actions button{width:74px;min-height:48px;background:#fffdf0eF;box-shadow:0 2px 6px #0003;font-size:12px}
-#direction{position:fixed;left:50%;bottom:15px;transform:translateX(-50%);font-size:22px;color:#fff;text-shadow:0 2px 4px #000;z-index:3;pointer-events:none}
-#kioskOverlay{display:none;position:fixed;inset:0;background:#102c1bcc;z-index:20;align-items:center;justify-content:center;padding:12px}
-#kioskCard{width:min(460px,96vw);max-height:90vh;overflow:auto;background:#fffdf2;border-radius:18px;padding:16px;box-shadow:0 8px 30px #0006;touch-action:pan-y}
-#kioskCard h2{margin:0 0 6px;color:#24522d}
-#kioskCard p{margin:5px 0 12px;font-size:13px}
-#kioskProducts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.product{background:#eaf5e5;border-radius:12px;padding:10px;text-align:center}
+.menuTitle{font-size:17px;font-weight:bold;color:#21522e;margin:3px 0 10px}
+.menuTab{display:block;width:100%;text-align:left;margin:6px 0;background:#e2f1da;font-size:14px}
+.subPanel{display:none;padding:7px;background:#f6faef;border-radius:10px;margin:5px 0 9px}
+.subPanel.open{display:block}
+.animalGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.animalGrid button{font-size:11px;padding:9px 4px}
+#message{position:fixed;z-index:4;top:52px;left:50%;transform:translateX(-50%);background:#173d2ce8;color:white;border-radius:10px;padding:7px 10px;font-size:12px;text-align:center;max-width:75vw;pointer-events:none}
+#goal{position:fixed;z-index:3;left:7px;top:48px;background:#fffde8e8;color:#29452b;border-radius:9px;padding:6px 8px;font-size:11px;pointer-events:none}
+#joystick{position:fixed;z-index:6;bottom:12px;left:12px;width:92px;height:92px;border-radius:50%;background:#ffffff70;border:3px solid #ffffffc9;touch-action:none}
+#stick{position:absolute;left:23px;top:23px;width:40px;height:40px;border-radius:50%;background:#1c6b39e8;border:3px solid white}
+#actions{position:fixed;z-index:6;right:9px;bottom:12px;display:flex;flex-direction:column;gap:6px}
+#actions button{width:70px;min-height:40px;background:#fffff0ed;font-size:11px;padding:6px}
+#kioskOverlay{display:none;position:fixed;z-index:20;inset:0;background:#102c1bcc;align-items:center;justify-content:center;padding:10px}
+#kioskCard{width:min(430px,96vw);max-height:90vh;overflow:auto;background:#fffdf2;border-radius:16px;padding:14px;touch-action:pan-y}
+#kioskCard h2{margin:0 0 8px;color:#24522d;font-size:20px}
+#kioskProducts{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.product{background:#eaf5e5;border-radius:10px;padding:9px;text-align:center;font-size:12px}
 .product strong{display:block;margin-bottom:5px}
-.product button{width:100%;margin-top:6px;background:#d3edc9}
-#kioskClose{margin-top:12px;width:100%;background:#235b34;color:white}
-#rotateOverlay{display:none;position:fixed;inset:0;background:#17472b;z-index:100;color:white;align-items:center;justify-content:center;text-align:center;padding:25px}
-#rotateOverlay h1{font-size:27px;margin:10px}
-#rotateOverlay p{font-size:16px;line-height:1.5}
-#rotateOverlay button{margin-top:12px;background:#e7f5d9}
-@media (orientation:portrait){
- #rotateOverlay{display:flex}
-}
+.product button{width:100%;margin-top:6px;font-size:11px}
+#kioskStock{font-size:12px}
+#kioskClose{width:100%;margin-top:8px;background:#235b34;color:white}
+#kioskOpen{width:100%;margin-top:8px}
+#rotateOverlay{display:none;position:fixed;inset:0;z-index:100;background:#17472b;color:white;align-items:center;justify-content:center;text-align:center;padding:22px}
+#rotateOverlay h1{font-size:26px}
+#rotateOverlay p{line-height:1.5}
+#rotateButton{background:#e7f5d9}
+@media (orientation:portrait){#rotateOverlay{display:flex}}
 @media (orientation:landscape) and (max-height:500px){
- #hud{top:4px;left:5px;gap:4px}
- .stat{font-size:11px;padding:5px 7px}
- #menuToggle{top:4px;right:5px;width:40px;height:37px}
- #menuPanel{top:46px;max-height:76vh}
- #message{top:43px;font-size:11px;padding:6px 9px}
- #goal{top:43px;font-size:10px;max-width:160px}
- #joystick{width:86px;height:86px;left:12px;bottom:10px}
- #stick{left:21px;top:21px;width:38px;height:38px}
- #actions{right:9px;bottom:10px;gap:5px}
- #actions button{width:65px;min-height:39px;padding:6px;font-size:11px}
- #direction{bottom:7px}
+ #hud{top:4px;left:4px;gap:3px}
+ .stat{font-size:10px;padding:5px 6px}
+ #menuToggle{top:4px;right:4px;width:38px;height:36px}
+ #menuPanel{top:44px;max-height:78vh}
+ #goal{top:39px;font-size:10px}
+ #message{top:43px;font-size:11px}
+ #joystick{width:78px;height:78px;left:8px;bottom:8px}
+ #stick{left:17px;top:17px;width:38px;height:38px}
+ #actions{right:7px;bottom:8px}
+ #actions button{width:62px;min-height:34px}
 }
 </style>
 </head>
@@ -62,77 +60,62 @@ button:active{transform:scale(.96)}
 <canvas id="game"></canvas>
 
 <div id="hud">
- <div class="stat">🐾 Seviye <span id="level">1</span></div>
+ <div class="stat">🐾 Sv. <span id="level">1</span></div>
  <div class="stat">💰 <span id="money">500</span> ₺</div>
- <div class="stat">⭐ XP <span id="xp">0</span></div>
+ <div class="stat">⭐ <span id="xp">0</span></div>
 </div>
 
 <button id="menuToggle" aria-label="Menüyü aç">☰</button>
-
 <div id="menuPanel">
- <div class="menuTitle">🐾 Hayvanat Bahçesi</div>
- <div class="menuGroup">
-  <h3>OYUN</h3>
-  <div class="menuButtons">
-   <button id="btnGoal">🎯 Hedefler</button>
-   <button id="btnZoom">🔎 Kamerayı yaklaştır</button>
-   <button id="btnKiosk">🏪 Büfeye git</button>
-   <button id="btnCloseMenu">✖ Menüyü kapat</button>
+ <div class="menuTitle">🐾 Hayvanat Bahçem</div>
+
+ <button class="menuTab" id="animalsTab">🐾 Hayvanlar <span id="animalsArrow">＋</span></button>
+ <div class="subPanel" id="animalsPanel">
+  <div class="animalGrid">
+   <button data-buy="turtle">🐢 Kaplumbağa<br>100 ₺</button>
+   <button data-buy="rabbit">🐇 Tavşan<br>150 ₺</button>
+   <button data-buy="cat">🐈 Kedi<br>200 ₺</button>
+   <button data-buy="dog">🐕 Köpek<br>250 ₺</button>
+   <button data-buy="monkey">🐒 Maymun<br>350 ₺</button>
+   <button data-buy="hippo">🦛 Su aygırı<br>500 ₺</button>
+   <button data-buy="giraffe">🦒 Zürafa<br>650 ₺</button>
+   <button data-buy="elephant">🐘 Fil<br>800 ₺</button>
+   <button data-buy="lion">🦁 Aslan<br>1000 ₺</button>
   </div>
  </div>
- <div class="menuGroup">
-  <h3>HAYVAN SATIN AL</h3>
-  <div class="menuButtons">
-   <button data-buy="turtle">🐢 Kaplumbağa · 100 ₺</button>
-   <button data-buy="rabbit">🐇 Tavşan · 150 ₺</button>
-   <button data-buy="cat">🐈 Kedi · 200 ₺</button>
-   <button data-buy="dog">🐕 Köpek · 250 ₺</button>
-   <button data-buy="monkey">🐒 Maymun · 350 ₺</button>
-   <button data-buy="hippo">🦛 Su aygırı · 500 ₺</button>
-   <button data-buy="giraffe">🦒 Zürafa · 650 ₺</button>
-   <button data-buy="elephant">🐘 Fil · 800 ₺</button>
-   <button data-buy="lion">🦁 Aslan · 1000 ₺</button>
-  </div>
- </div>
- <div class="menuGroup">
-  <h3>BAKIM</h3>
-  <div class="menuButtons">
-   <button id="btnCare">🧹 Bakım yap</button>
-   <button id="btnSell">💵 Büfe satışını kontrol et</button>
-  </div>
- </div>
- <div class="menuGroup">
-  <h3>İPUCU</h3>
-  <p style="font-size:12px;line-height:1.4;margin:0">Joystick ile yürü. Yerdeki çöplerin üzerinden geçerek onları topla. Büfeden ürün alıp ziyaretçilere sat ve kazancınla yeni hayvanlar satın al.</p>
- </div>
+
+ <button class="menuTab" id="kioskTab">🏪 Büfe ve ürünler</button>
+ <button class="menuTab" id="careTab">🧹 Hayvan bakımı</button>
+ <button class="menuTab" id="goalTab">🎯 Hedefler ve bilgiler</button>
+ <button class="menuTab" id="zoomTab">🔎 Kamera yakınlaştır</button>
+ <button class="menuTab" id="closeMenu">✖ Menüyü kapat</button>
+ <div style="font-size:11px;line-height:1.4;margin-top:8px">Joystick ile hareket et. Çöplerin üzerinden geçerek para kazan. Büfede ürün alıp satış yap ve yeni hayvanlar satın al.</div>
 </div>
 
 <div id="message">Hayvanat bahçene hoş geldin!</div>
-<div id="goal">🎯 Hedef: Bahçeni büyüt!</div>
-
+<div id="goal">🎯 Bahçeni büyüt!</div>
 <div id="joystick"><div id="stick"></div></div>
-<div id="direction">▲</div>
 <div id="actions">
- <button id="actionInteract">🤝 Etkileşim</button>
- <button id="actionClean">🧹 Temizle</button>
+ <button id="interactButton">🤝 Etkileşim</button>
+ <button id="cleanButton">🧹 Temizle</button>
 </div>
 
 <div id="kioskOverlay">
  <div id="kioskCard">
-  <h2>🏪 Hayvanat Bahçesi Büfesi</h2>
-  <p>Ürün satın al, stok yap ve ziyaretçilere satış yaparak para kazan.</p>
+  <h2>🏪 Büfe</h2>
+  <p style="font-size:12px">Ürün satın al, büfeyi aç ve ziyaretçilere satış yap.</p>
   <div id="kioskProducts"></div>
   <p id="kioskStock"></p>
-  <button id="kioskOpen" style="width:100%;background:#d3edc9">Büfeyi aç / satış yap</button>
+  <button id="kioskOpen">🟢 Büfeyi aç</button>
   <button id="kioskClose">Bahçeye dön</button>
  </div>
 </div>
 
 <div id="rotateOverlay">
  <div>
-  <div style="font-size:55px">📱 ↻</div>
+  <div style="font-size:50px">📱 ↻</div>
   <h1>Telefonunu yatay çevir</h1>
-  <p>Oyun yatay ekranda daha rahat oynanır. Telefonunu yan çevirip devam et.</p>
+  <p>Oyun yatay ekranda daha rahat oynanır.</p>
   <button id="rotateButton">Yatay ekranı dene</button>
  </div>
 </div>
@@ -140,51 +123,49 @@ button:active{transform:scale(.96)}
 <script type="module">
 import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 
-const canvas=document.getElementById('game');
+const $=id=>document.getElementById(id);
+const canvas=$('game');
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(0x91d7f0);
 scene.fog=new THREE.Fog(0x91d7f0,45,115);
 
 const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,250);
 camera.position.set(0,10,15);
-
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));
 renderer.setSize(innerWidth,innerHeight);
 renderer.shadowMap.enabled=true;
-renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 
 scene.add(new THREE.HemisphereLight(0xffffff,0x527548,2));
-const sun=new THREE.DirectionalLight(0xffffff,2.2);
+const sun=new THREE.DirectionalLight(0xffffff,2);
 sun.position.set(-15,25,12);
 sun.castShadow=true;
-sun.shadow.mapSize.set(1024,1024);
 scene.add(sun);
 
-const mat=(color,roughness=.9)=>new THREE.MeshStandardMaterial({color,roughness});
-const grass=mat(0x70bf58),roadMat=mat(0xd6c9a5),pathMat=mat(0xc3ad81);
+const mat=c=>new THREE.MeshStandardMaterial({color:c,roughness:.9});
+const grass=mat(0x70bf58),road=mat(0xd6c9a5),pathMat=mat(0xc3ad81);
 const fenceMat=mat(0xf1e6c9),leafMat=mat(0x27834a),trunkMat=mat(0x79502d);
+
 const floor=new THREE.Mesh(new THREE.PlaneGeometry(120,120),grass);
 floor.rotation.x=-Math.PI/2;
 floor.receiveShadow=true;
 scene.add(floor);
 
-function box(x,y,z,sx,sy,sz,material){
- const o=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),material);
+function box(x,y,z,sx,sy,sz,m){
+ const o=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),m);
  o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;scene.add(o);return o;
 }
-function cylinder(x,y,z,r1,r2,h,material,segments=10){
- const o=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,segments),material);
+function cylinder(x,y,z,r1,r2,h,m,n=9){
+ const o=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,n),m);
  o.position.set(x,y,z);o.castShadow=true;scene.add(o);return o;
 }
-function path(x,z,w,d,material=pathMat){
- const o=new THREE.Mesh(new THREE.BoxGeometry(w,.06,d),material);
+function path(x,z,w,d,m=pathMat){
+ const o=new THREE.Mesh(new THREE.BoxGeometry(w,.06,d),m);
  o.position.set(x,.035,z);o.receiveShadow=true;scene.add(o);
 }
-path(0,0,5,90,roadMat);
-path(0,0,70,4,roadMat);
-path(-17,0,3,60);
-path(17,0,3,60);
+path(0,0,5,90,road);
+path(0,0,70,4,road);
+path(-17,0,3,60);path(17,0,3,60);
 
 function tree(x,z){
  cylinder(x,1,z,.23,.32,2,trunkMat,7);
@@ -196,73 +177,53 @@ for(let i=0;i<65;i++){
  if(Math.abs(x)<22&&Math.abs(z)<30)continue;
  tree(x,z);
 }
-function fence(x,z,w,d){
- const h=.65;
- for(let xx=x-w/2;xx<=x+w/2+.01;xx+=1.1){
-  box(xx,h/2,z-w*0+h/2*0,.07,h,.07,fenceMat);
- }
- for(let zz=z-d/2;zz<=z+d/2+.01;zz+=1.1){
-  box(x-w/2,h/2,zz,.07,h,.07,fenceMat);
-  box(x+w/2,h/2,zz,.07,h,.07,fenceMat);
- }
- box(x,.45,z-d/2,w,.09,.09,fenceMat);
- box(x,.45,z+d/2,w,.09,.09,fenceMat);
-}
-const pens={
- turtle:{x:-27,z:-18,w:10,d:9,color:0x4c9d4b},
- rabbit:{x:-13,z:-18,w:10,d:9,color:0xd8c4a2},
- cat:{x:1,z:-18,w:10,d:9,color:0x9e9e9e},
- dog:{x:15,z:-18,w:10,d:9,color:0xc88a4b},
- monkey:{x:-27,z:3,w:10,d:9,color:0x8e6a45},
- hippo:{x:-13,z:3,w:10,d:9,color:0x8b9aa3},
- giraffe:{x:1,z:3,w:10,d:9,color:0xd9a93e},
- elephant:{x:15,z:3,w:10,d:9,color:0x929ca5},
- lion:{x:28,z:3,w:10,d:9,color:0xd99a36}
-};
-for(const p of Object.values(pens)){
- path(p.x,p.z,p.w+.5,p.d+.5,mat(0x91cc67));
- fence(p.x,p.z,p.w,p.d);
-}
 
-const animalColors={
- turtle:0x398d45,rabbit:0xe8ddcb,cat:0x9a9a9a,dog:0xc58b50,
- monkey:0x8c5c37,hippo:0x8b98a5,giraffe:0xd9a52d,
- elephant:0x8e999f,lion:0xd18b2c
+const pens={
+ turtle:{x:-27,z:-18,w:10,d:9},
+ rabbit:{x:-13,z:-18,w:10,d:9},
+ cat:{x:1,z:-18,w:10,d:9},
+ dog:{x:15,z:-18,w:10,d:9},
+ monkey:{x:-27,z:3,w:10,d:9},
+ hippo:{x:-13,z:3,w:10,d:9},
+ giraffe:{x:1,z:3,w:10,d:9},
+ elephant:{x:15,z:3,w:10,d:9},
+ lion:{x:28,z:3,w:10,d:9}
 };
-const animalNames={
- turtle:'Kaplumbağa',rabbit:'Tavşan',cat:'Kedi',dog:'Köpek',
- monkey:'Maymun',hippo:'Su aygırı',giraffe:'Zürafa',
- elephant:'Fil',lion:'Aslan'
-};
-const prices={
- turtle:100,rabbit:150,cat:200,dog:250,monkey:350,
- hippo:500,giraffe:650,elephant:800,lion:1000
-};
+for(const p of Object.values(pens))path(p.x,p.z,p.w+.5,p.d+.5,mat(0x91cc67));
+
+function fence(p){
+ const h=.65,m=fenceMat;
+ for(let x=p.x-p.w/2;x<=p.x+p.w/2+.1;x+=1.1){
+  box(x,h/2,p.z-p.d/2,.07,h,.07,m);
+  box(x,h/2,p.z+p.d/2,.07,h,.07,m);
+ }
+ for(let z=p.z-p.d/2;z<=p.z+p.d/2+.1;z+=1.1){
+  box(p.x-p.w/2,h/2,z,.07,h,.07,m);
+  box(p.x+p.w/2,h/2,z,.07,h,.07,m);
+ }
+ box(p.x,.45,p.z-p.d/2,p.w,.09,.09,m);
+ box(p.x,.45,p.z+p.d/2,p.w,.09,.09,m);
+}
+for(const p of Object.values(pens))fence(p);
+
+const names={turtle:'Kaplumbağa',rabbit:'Tavşan',cat:'Kedi',dog:'Köpek',monkey:'Maymun',hippo:'Su aygırı',giraffe:'Zürafa',elephant:'Fil',lion:'Aslan'};
+const colors={turtle:0x398d45,rabbit:0xe8ddcb,cat:0x9a9a9a,dog:0xc58b50,monkey:0x8c5c37,hippo:0x8b98a5,giraffe:0xd9a52d,elephant:0x8e999f,lion:0xd18b2c};
+const prices={turtle:100,rabbit:150,cat:200,dog:250,monkey:350,hippo:500,giraffe:650,elephant:800,lion:1000};
 const animalGroups={};
-function makeAnimal(type,pen,count=3){
- const group=new THREE.Group();
- const color=animalColors[type]||0xaaaaaa;
+
+function makeAnimal(type,p,count=3){
+ const group=new THREE.Group(),color=colors[type];
  for(let i=0;i<count;i++){
   const a=new THREE.Group();
-  const body=new THREE.Mesh(new THREE.SphereGeometry(type==='elephant'? .65:.42,12,9),mat(color));
-  body.position.y=type==='giraffe'?1.05:.55;
-  body.scale.set(1.25,1,1.55);
-  a.add(body);
+  const body=new THREE.Mesh(new THREE.SphereGeometry(type==='elephant'?.65:.42,12,9),mat(color));
+  body.position.y=type==='giraffe'?1.05:.55;body.scale.set(1.25,1,1.55);a.add(body);
   const head=new THREE.Mesh(new THREE.SphereGeometry(type==='elephant'?.38:.29,12,9),mat(color));
-  head.position.set(0,type==='giraffe'?2:.85,.42);
-  a.add(head);
+  head.position.set(0,type==='giraffe'?2:.85,.42);a.add(head);
   if(type==='giraffe'){
    const neck=new THREE.Mesh(new THREE.CylinderGeometry(.13,.18,.95,8),mat(color));
    neck.position.set(0,1.45,.28);a.add(neck);
-   for(let k=0;k<5;k++){
-    const spot=new THREE.Mesh(new THREE.SphereGeometry(.08,6,5),mat(0x70461f));
-    spot.position.set((Math.random()-.5)*.25, .8+Math.random()*.9,.7);
-    a.add(spot);
-   }
   }
   if(type==='elephant'){
-   const ear=new THREE.Mesh(new THREE.SphereGeometry(.28,8,7),mat(color));
-   ear.position.set(-.36,.88,.35);a.add(ear);
    const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.09,.13,.65,8),mat(color));
    trunk.position.set(0,.52,.72);trunk.rotation.x=-.3;a.add(trunk);
   }
@@ -276,26 +237,24 @@ function makeAnimal(type,pen,count=3){
     ear.scale.set(.7,2.2,.7);ear.position.set(side*.13,1.22,.43);a.add(ear);
    }
   }
-  for(let leg=0;leg<4;leg++){
-   const l=new THREE.Mesh(new THREE.CylinderGeometry(.07,.08,.34,7),mat(color));
-   l.position.set(leg%2===0?-.22:.22,.24,leg<2?-.25:.3);a.add(l);
+  for(let j=0;j<4;j++){
+   const leg=new THREE.Mesh(new THREE.CylinderGeometry(.07,.08,.34,7),mat(color));
+   leg.position.set(j%2===0?-.22:.22,.24,j<2?-.25:.3);a.add(leg);
   }
-  a.position.set(pen.x+(Math.random()-.5)*(pen.w-2),0,pen.z+(Math.random()-.5)*(pen.d-2));
-  a.rotation.y=Math.random()*Math.PI*2;
-  group.add(a);
+  a.position.set(p.x+(Math.random()-.5)*(p.w-2),0,p.z+(Math.random()-.5)*(p.d-2));
+  a.rotation.y=Math.random()*Math.PI*2;group.add(a);
  }
  scene.add(group);return group;
 }
-animalGroups.turtle=makeAnimal('turtle',pens.turtle,3);
-animalGroups.rabbit=makeAnimal('rabbit',pens.rabbit,3);
 
+animalGroups.turtle=makeAnimal('turtle',pens.turtle);
+animalGroups.rabbit=makeAnimal('rabbit',pens.rabbit);
 const player=new THREE.Group();
 const body=new THREE.Mesh(new THREE.CapsuleGeometry(.35,.65,4,8),mat(0x2767d8));
 body.position.y=.75;player.add(body);
 const head=new THREE.Mesh(new THREE.SphereGeometry(.27,12,10),mat(0xffd1a2));
 head.position.y=1.35;player.add(head);
-scene.add(player);
-player.position.set(0,0,8);
+scene.add(player);player.position.set(0,0,8);
 
 const visitors=[];
 const hairColors=[0x17120f,0x51331d,0xc99a4c,0xb95727];
@@ -306,15 +265,10 @@ function makeVisitor(){
  const skin=mat(0xf1c29a);
  const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.23,.42,3,7),shirt);
  torso.position.y=.6;g.add(torso);
- const head=new THREE.Mesh(new THREE.SphereGeometry(.19,9,8),skin);
- head.position.y=1.08;g.add(head);
+ const h=new THREE.Mesh(new THREE.SphereGeometry(.19,9,8),skin);
+ h.position.y=1.08;g.add(h);
  const hair=new THREE.Mesh(new THREE.SphereGeometry(.2,9,7),mat(hairColors[Math.floor(Math.random()*hairColors.length)]));
- hair.scale.set(1,Math.random()>.5?.55:1.05,1);
- hair.position.y=1.19;g.add(hair);
- if(Math.random()>.5){
-  const backHair=new THREE.Mesh(new THREE.SphereGeometry(.16,8,7),mat(0x51331d));
-  backHair.scale.set(.9,1.2,.6);backHair.position.set(0,1.02,-.12);g.add(backHair);
- }
+ hair.scale.set(1,Math.random()>.5?.55:1.05,1);hair.position.y=1.19;g.add(hair);
  for(let i=0;i<2;i++){
   const leg=new THREE.Mesh(new THREE.CylinderGeometry(.06,.07,.35,6),mat(0x33435b));
   leg.position.set(i===0?-.11:.11,.18,0);g.add(leg);
@@ -340,68 +294,66 @@ function makeTrash(){
 for(let i=0;i<24;i++)makeTrash();
 
 const products={
- cola:{name:'🥤 Kola',cost:10,price:18,stock:5},
- seeds:{name:'🌻 Ay çekirdeği',cost:8,price:15,stock:5},
- burger:{name:'🍔 Hamburger',cost:20,price:35,stock:5}
+ cola:{name:'🥤 Kola',cost:10,price:18},
+ seeds:{name:'🌻 Ay çekirdeği',cost:8,price:15},
+ burger:{name:'🍔 Hamburger',cost:20,price:35}
 };
-let money=500,xp=0,level=1,zoom=15;
-let salesOpen=false,kioskNear=false;
 const inventory={cola:0,seeds:0,burger:0};
-const $=id=>document.getElementById(id);
-function say(text){$('message').textContent=text;}
+let money=500,xp=0,level=1,zoom=15,salesOpen=false;
+function say(t){$('message').textContent=t;}
 function updateHUD(){
  $('money').textContent=money;
  $('xp').textContent=xp;
  $('level').textContent=level;
- $('goal').textContent=`🎯 Hedef: ${level<2?'Bir ürün satın al ve satış yap':level<3?'Yeni hayvan satın al':'Bahçeni büyüt'} · Seviye ${level}`;
+ $('goal').textContent=`🎯 Seviye ${level} · Bahçeni büyüt!`;
 }
 function addXP(n){
  xp+=n;
- if(xp>=level*100){xp-=level*100;level++;money+=50;say('Seviye atladın! 50 ₺ ödül kazandın.');}
+ if(xp>=level*100){xp-=level*100;level++;money+=50;say('Seviye atladın! 50 ₺ kazandın.');}
  updateHUD();
 }
-function openMenu(force){
- $('menuPanel').classList.toggle('open',force===undefined?!$('menuPanel').classList.contains('open'):force);
+
+function buyAnimal(type){
+ if(animalGroups[type]){say('Bu hayvan zaten bahçende var.');return;}
+ if(money<prices[type]){say('Yeterli paran yok!');return;}
+ money-=prices[type];
+ animalGroups[type]=makeAnimal(type,pens[type]);
+ addXP(25);updateHUD();
+ say(names[type]+' satın aldın!');
+ $('animalsPanel').classList.remove('open');
+ $('animalsArrow').textContent='＋';
+ $('menuPanel').classList.remove('open');
 }
-$('menuToggle').onclick=()=>openMenu();
-$('btnCloseMenu').onclick=()=>openMenu(false);
-$('btnGoal').onclick=()=>{
- say(`Seviye ${level}: Ziyaretçilere satış yap, çöpleri topla ve yeni hayvanlar al.`);
- openMenu(false);
-};
-$('btnZoom').onclick=()=>{
- zoom=zoom>12?9:15;
- say(zoom<12?'Kamera yaklaştırıldı.':'Kamera uzaklaştırıldı.');
- openMenu(false);
-};
-$('btnKiosk').onclick=()=>{openKiosk();openMenu(false);};
-$('btnCare').onclick=care;
-$('btnSell').onclick=sellVisit;
-$('actionInteract').onclick=interact;
-$('actionClean').onclick=cleanNearby;
 document.querySelectorAll('[data-buy]').forEach(b=>{
  b.onclick=()=>buyAnimal(b.dataset.buy);
 });
 
-function buyAnimal(type){
- const p=pens[type];
- if(!p){say('Bu hayvan bulunamadı.');return;}
- if(animalGroups[type]){say('Bu hayvan zaten bahçende var.');return;}
- if(money<prices[type]){say('Yeterli paran yok!');return;}
- money-=prices[type];
- animalGroups[type]=makeAnimal(type,p,3);
- addXP(25);updateHUD();
- say(`${animalNames[type]} satın aldın!`);
- openMenu(false);
-}
-function care(){
- let count=Object.keys(animalGroups).length;
- if(!count){say('Önce hayvan satın al.');return;}
+$('menuToggle').onclick=()=>{$('menuPanel').classList.toggle('open');};
+$('closeMenu').onclick=()=>{$('menuPanel').classList.remove('open');};
+$('animalsTab').onclick=()=>{
+ const p=$('animalsPanel');
+ p.classList.toggle('open');
+ $('animalsArrow').textContent=p.classList.contains('open')?'－':'＋';
+};
+$('kioskTab').onclick=()=>{openKiosk();$('menuPanel').classList.remove('open');};
+$('careTab').onclick=()=>{
  if(money<10){say('Bakım için 10 ₺ gerekiyor.');return;}
- money-=10;addXP(10);
- say('Hayvanların bakımı yapıldı. +10 XP');
- updateHUD();
-}
+ if(!Object.keys(animalGroups).length){say('Önce hayvan satın al.');return;}
+ money-=10;addXP(10);say('Hayvanların bakımı yapıldı!');
+};
+$('goalTab').onclick=()=>{
+ say(`Seviye ${level}. Bir sonraki seviye için ${level*100-xp} XP gerekiyor.`);
+};
+$('zoomTab').onclick=()=>{
+ zoom=zoom>12?9:15;
+ say(zoom<12?'Kamera yaklaştırıldı.':'Kamera uzaklaştırıldı.');
+};
+$('interactButton').onclick=()=>{
+ if(player.position.distanceTo(new THREE.Vector3(0,0,0))<9)openKiosk();
+ else sellVisit();
+};
+$('cleanButton').onclick=cleanNearby;
+
 function openKiosk(){
  $('kioskOverlay').style.display='flex';
  renderKiosk();
@@ -409,8 +361,7 @@ function openKiosk(){
 $('kioskClose').onclick=()=>{$('kioskOverlay').style.display='none';};
 $('kioskOpen').onclick=()=>{
  salesOpen=!salesOpen;
- if(salesOpen){say('Büfe açıldı! Ziyaretçiler alışveriş yapabilir.');}
- else say('Büfe satışa kapatıldı.');
+ say(salesOpen?'Büfe açıldı, satışlar başladı.':'Büfe kapatıldı.');
  renderKiosk();
 };
 function renderKiosk(){
@@ -421,79 +372,78 @@ function renderKiosk(){
   const buy=document.createElement('button');buy.textContent='5 adet al';
   buy.onclick=()=>{
    const total=p.cost*5;
-   if(money<total){say('Bu ürün için yeterli paran yok.');return;}
+   if(money<total){say('Yeterli paran yok!');return;}
    money-=total;inventory[key]+=5;updateHUD();renderKiosk();
-   say(`${p.name}: 5 adet stok aldın.`);
+   say(p.name+' stoklandı.');
   };
   card.appendChild(buy);holder.appendChild(card);
  }
  $('kioskStock').textContent=`Stok: Kola ${inventory.cola} · Çekirdek ${inventory.seeds} · Hamburger ${inventory.burger}`;
- $('kioskOpen').textContent=salesOpen?'🔴 Büfeyi kapat':'🟢 Büfeyi aç / satış yap';
+ $('kioskOpen').textContent=salesOpen?'🔴 Büfeyi kapat':'🟢 Büfeyi aç';
 }
 function sellVisit(){
- if(!salesOpen){say('Önce büfeyi aç.');openKiosk();return;}
- const available=Object.keys(inventory).filter(k=>inventory[k]>0);
- if(!available.length){say('Stokların bitmiş. Büfeden ürün satın al.');openKiosk();return;}
- const key=available[Math.floor(Math.random()*available.length)];
+ if(!salesOpen){say('Önce menüden büfeyi aç.');return;}
+ const keys=Object.keys(inventory).filter(k=>inventory[k]>0);
+ if(!keys.length){say('Stok bitti! Büfeden ürün satın al.');openKiosk();return;}
+ const key=keys[Math.floor(Math.random()*keys.length)];
  inventory[key]--;money+=products[key].price;addXP(5);
- say(`${products[key].name} satıldı! +${products[key].price} ₺`);
+ say(products[key].name+' satıldı! +'+products[key].price+' ₺');
  renderKiosk();updateHUD();
 }
-function interact(){
- const d=player.position.distanceTo(new THREE.Vector3(0,0,0));
- if(d<7){openKiosk();return;}
- sellVisit();
-}
 function cleanNearby(){
- let nearest=-1,dist=2.4;
+ let index=-1,dist=2;
  trash.forEach((t,i)=>{
   const d=player.position.distanceTo(t.position);
-  if(d<dist){dist=d;nearest=i;}
+  if(d<dist){dist=d;index=i;}
  });
- if(nearest>=0){
-  scene.remove(trash[nearest]);trash.splice(nearest,1);
-  money+=5;addXP(5);say('Çöp toplandı! +5 ₺');
-  makeTrash();updateHUD();
- }else say('Yakınında toplanacak çöp yok.');
+ if(index<0){say('Yakınında çöp yok.');return;}
+ scene.remove(trash[index]);trash.splice(index,1);
+ money+=5;addXP(5);makeTrash();updateHUD();say('Çöp topladın! +5 ₺');
 }
 
 const joy=$('joystick'),stick=$('stick');
 let joyX=0,joyY=0,joyActive=false;
-function joyMove(e){
+function moveStick(e){
  const r=joy.getBoundingClientRect();
- const cx=r.left+r.width/2,cy=r.top+r.height/2;
- const dx=e.clientX-cx,dy=e.clientY-cy;
- const max=34,len=Math.max(1,Math.hypot(dx,dy)),scale=Math.min(1,max/len);
- joyX=dx/Math.max(max,len);joyY=dy/Math.max(max,len);
- stick.style.left=(r.width/2-22+dx*scale)+'px';
- stick.style.top=(r.height/2-22+dy*scale)+'px';
+ const dx=e.clientX-(r.left+r.width/2);
+ const dy=e.clientY-(r.top+r.height/2);
+ const max=27,len=Math.max(1,Math.hypot(dx,dy)),s=Math.min(1,max/len);
+ joyX=dx/max;joyY=dy/max;
+ const px=dx*s,py=dy*s;
+ stick.style.left=(r.width/2-20+px)+'px';
+ stick.style.top=(r.height/2-20+py)+'px';
 }
 joy.addEventListener('pointerdown',e=>{
- joyActive=true;joy.setPointerCapture(e.pointerId);joyMove(e);
+ joyActive=true;joy.setPointerCapture(e.pointerId);moveStick(e);
 });
-joy.addEventListener('pointermove',e=>{if(joyActive)joyMove(e);});
-function resetJoy(){joyActive=false;joyX=0;joyY=0;stick.style.left='29px';stick.style.top='29px';}
+joy.addEventListener('pointermove',e=>{if(joyActive)moveStick(e);});
+function resetJoy(){
+ joyActive=false;joyX=0;joyY=0;
+ stick.style.left='23px';stick.style.top='23px';
+}
 joy.addEventListener('pointerup',resetJoy);
 joy.addEventListener('pointercancel',resetJoy);
 
 $('rotateButton').onclick=async()=>{
- try{if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock('landscape');}catch(e){}
+ try{
+  if(screen.orientation?.lock)await screen.orientation.lock('landscape');
+ }catch(e){}
 };
+
 window.addEventListener('resize',()=>{
  camera.aspect=innerWidth/innerHeight;
  camera.updateProjectionMatrix();
  renderer.setSize(innerWidth,innerHeight);
- renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
+ renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));
 });
 
-let last=performance.now(),autoSaleTimer=0;
+let last=performance.now(),saleTimer=0;
 function animate(now){
  requestAnimationFrame(animate);
  const dt=Math.min((now-last)/1000,.05);last=now;
  if(joyX||joyY){
-  const speed=7;
-  player.position.x+=joyX*speed*dt;
-  player.position.z+=joyY*speed*dt;
+  player.position.x+=joyX*7*dt;
+  player.position.z+=joyY*7*dt;
   player.position.x=THREE.MathUtils.clamp(player.position.x,-40,40);
   player.position.z=THREE.MathUtils.clamp(player.position.z,-42,42);
   player.rotation.y=Math.atan2(joyX,joyY);
@@ -506,6 +456,7 @@ function animate(now){
  );
  camera.position.lerp(behind,.08);
  camera.lookAt(target.x,target.y+1,target.z);
+
  visitors.forEach(v=>{
   v.wait-=dt;
   if(v.wait<=0){v.dir+=(Math.random()-.5)*1.7;v.wait=1+Math.random()*3;}
@@ -514,18 +465,18 @@ function animate(now){
   if(Math.abs(v.g.position.x)>36||Math.abs(v.g.position.z)>40)v.dir+=Math.PI;
   v.g.rotation.y=v.dir;
  });
+
  for(let i=trash.length-1;i>=0;i--){
   if(player.position.distanceTo(trash[i].position)<.8){
    scene.remove(trash[i]);trash.splice(i,1);
-   money+=5;addXP(5);updateHUD();
+   money+=5;addXP(5);makeTrash();updateHUD();
    say('Çöp topladın! +5 ₺');
-   makeTrash();
   }
  }
- autoSaleTimer+=dt;
- if(salesOpen&&autoSaleTimer>3){
-  autoSaleTimer=0;
-  if(Math.random()<.65)sellVisit();
+ saleTimer+=dt;
+ if(salesOpen&&saleTimer>4){
+  saleTimer=0;
+  if(Math.random()<.7)sellVisit();
  }
  for(const group of Object.values(animalGroups)){
   group.children.forEach((a,i)=>{a.rotation.y+=Math.sin(now*.001+i)*dt*.2;});
