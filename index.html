@@ -162,8 +162,11 @@ function drawBuffet(){
 }
 function drawAnimal(emoji,x,y){
  ctx.fillStyle='#0002';
- ctx.beginPath();ctx.ellipse(x,y+.55,.8,.35,0,0,Math.PI*2);ctx.fill();
- textAt(emoji,x,y,1.45);
+ ctx.beginPath();
+ ctx.ellipse(x,y+.22,.32,.13,0,0,Math.PI*2);
+ ctx.fill();
+ textAt(emoji,x,y,.65);
+}
 }
 function drawPlayer(){
  // Gölge
