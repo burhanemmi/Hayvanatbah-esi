@@ -3,198 +3,270 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#153f2c">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#173b2b">
 <title>Hayvanat Bahçem</title>
 <style>
-:root{--green:#1d6945;--dark:#173d2b;--lime:#c9f27b;--cream:#f6f7ef;--gold:#ffc95c}
+:root{--green:#245f3d;--dark:#173b2b;--cream:#f5f4e9;--gold:#f6c65b}
 *{box-sizing:border-box}
-body{margin:0;background:#edf1e7;color:#20372a;font-family:system-ui,-apple-system,sans-serif}
+body{margin:0;background:#dce5d4;color:#24382b;font-family:system-ui,-apple-system,sans-serif}
 button{font:inherit;cursor:pointer;border:0}
-.app{max-width:650px;margin:auto;min-height:100vh;background:var(--cream);padding-bottom:90px}
-header{background:linear-gradient(130deg,#153c29,#26734b);color:white;padding:22px 18px 20px;border-radius:0 0 26px 26px}
-.brand{display:flex;align-items:center;gap:10px}
-.logo{font-size:35px}
-h1{font-size:23px;margin:0;font-weight:850;letter-spacing:-.7px}
-.subtitle{font-size:12px;color:#cce4d2;margin-top:3px}
-.levelrow{display:flex;align-items:center;justify-content:space-between;margin-top:20px;font-size:12px;color:#e0f2e4}
-.progress{height:7px;background:#ffffff30;border-radius:20px;margin-top:7px;overflow:hidden}
-.progress div{height:100%;width:35%;background:var(--lime);border-radius:20px;transition:width .3s}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:15px 14px}
-.stat{background:white;border:1px solid #e5e9dd;border-radius:15px;padding:12px 8px;box-shadow:0 3px 12px #20372a08}
-.stat-icon{font-size:19px}
-.stat-value{font-size:19px;font-weight:850;margin-top:4px}
-.stat-label{font-size:10px;color:#788477}
-main{padding:0 14px}
-.section-head{display:flex;align-items:center;justify-content:space-between;margin:22px 2px 12px}
-h2{font-size:18px;margin:0;letter-spacing:-.4px}
-.muted{font-size:11px;color:#788477}
-.park{height:290px;border-radius:21px;position:relative;overflow:hidden;background:linear-gradient(145deg,#9dc66d,#6baf65 45%,#398452);border:4px solid white;box-shadow:0 5px 18px #243e2817}
-.park:before{content:"";position:absolute;width:150%;height:72px;left:-20%;top:112px;background:#d9c59b;transform:rotate(-15deg);border:7px solid #b8a47c;border-left:0;border-right:0;box-shadow:0 0 0 3px #f0e2c1}
-.park:after{content:"";position:absolute;width:140px;height:100px;right:-20px;top:-18px;background:#78c9d1;border-radius:50%;border:8px solid #a7d9a1}
-.tree{position:absolute;z-index:2;font-size:27px;filter:drop-shadow(0 3px 1px #275e3433)}
-.t1{left:5%;top:8%}.t2{left:37%;top:8%}.t3{right:8%;top:47%}.t4{left:8%;bottom:8%}.t5{right:35%;bottom:5%}
-.enclosure{position:absolute;z-index:3;border:3px solid #b88e56;background:#d7c79a;border-radius:13px;box-shadow:0 3px 0 #6d9c53}
-.e1{left:5%;top:25%;width:40%;height:31%}
-.e2{right:5%;top:38%;width:38%;height:29%;background:#a9c98b}
-.e3{left:27%;bottom:5%;width:40%;height:25%;background:#d1c9a1}
-.fence{position:absolute;inset:5px;border:1px dashed #967b4c;border-radius:8px;pointer-events:none}
-.habitat-label{position:absolute;top:5px;left:7px;font-size:9px;font-weight:800;color:#4d5937;background:#ffffffbd;border-radius:5px;padding:3px 5px}
-.animal{position:absolute;font-size:37px;filter:drop-shadow(0 3px 2px #0002);animation:bob 3s ease-in-out infinite}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-.a1{left:22%;top:33%}.a2{left:13%;top:44%;font-size:29px}.a3{right:12%;top:45%}.a4{right:18%;top:53%;font-size:29px}.a5{left:39%;bottom:9%}
-.park-caption{position:absolute;z-index:4;bottom:9px;left:10px;color:#173d2b;font-size:10px;font-weight:800;background:#ffffffd9;padding:6px 9px;border-radius:8px}
-.notice{background:#e7f2dc;border:1px solid #d5e7c8;padding:13px;border-radius:15px;display:flex;align-items:center;gap:10px;margin-top:13px}
-.notice-icon{font-size:25px}
-.notice strong{font-size:12px;display:block}
-.notice p{font-size:11px;color:#607361;margin:3px 0 0}
-.primary{background:var(--green);color:white;border-radius:11px;padding:11px 13px;font-weight:750;font-size:12px}
-.primary:active,.secondary:active{transform:scale(.97)}
-.secondary{background:#edf3e8;color:#245a3c;border-radius:11px;padding:10px;font-size:12px;font-weight:750}
-.animal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
-.card{background:white;border:1px solid #e5e9df;border-radius:17px;overflow:hidden;box-shadow:0 3px 12px #243e2808}
-.animal-photo{height:115px;position:relative;background:linear-gradient(145deg,#b5d49a,#e2e9bf);overflow:hidden}
-.animal-photo img{width:100%;height:100%;object-fit:cover;display:block}
-.animal-fallback{display:none;position:absolute;inset:0;place-items:center;font-size:55px}
-.card-body{padding:11px}
-.card h3{font-size:14px;margin:0 0 4px}
-.card p{font-size:10px;color:#7a8577;margin:0 0 10px;min-height:25px;line-height:1.4}
-.card-foot{display:flex;align-items:center;justify-content:space-between;gap:5px}
-.price{font-size:12px;font-weight:850;color:#9a7020}
-.small-btn{background:var(--green);color:white;border-radius:8px;padding:8px 9px;font-size:10px;font-weight:800}
-.small-btn:disabled{background:#b8c1b4;color:#fff}
-.tasks{background:white;border:1px solid #e5e9df;border-radius:16px;padding:14px}
-.task{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #edf0e8}
+button:active{transform:scale(.97)}
+.app{max-width:760px;margin:auto;min-height:100dvh;background:var(--cream);padding-bottom:20px}
+header{background:linear-gradient(120deg,#143b28,#34774b);color:#fff;padding:17px 16px 14px}
+.brand{display:flex;justify-content:space-between;align-items:center;gap:8px}
+h1{font-size:21px;margin:0;font-weight:850;letter-spacing:-.6px}
+.sub{font-size:11px;color:#d4e8d7;margin-top:3px}
+.pill{background:#ffffff18;border:1px solid #ffffff25;padding:8px 10px;border-radius:12px;font-size:12px;font-weight:800;white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}
+.stat{background:#ffffff13;border:1px solid #ffffff20;border-radius:12px;padding:9px}
+.stat label{font-size:10px;color:#d4e8d7;display:block}
+.stat strong{display:block;font-size:19px;margin-top:2px}
+.xpwrap{margin-top:12px}
+.xptext{display:flex;justify-content:space-between;font-size:10px;color:#e1f0e2}
+.xp{height:6px;background:#ffffff2b;border-radius:8px;margin-top:5px;overflow:hidden}
+.xp div{height:100%;background:#d4f08a;width:0;transition:width .2s}
+main{padding:12px}
+.panel{background:#fff;border:1px solid #e4e7d9;border-radius:17px;padding:12px;margin-bottom:12px;box-shadow:0 4px 15px #243b2608}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+h2{font-size:15px;margin:0}
+.small{font-size:10px;color:#7a8778}
+#message{font-size:12px;color:#31583b;background:#eaf2df;padding:9px 11px;border-radius:10px;margin-top:10px;min-height:34px}
+.mapwrap{position:relative;border:4px solid white;border-radius:17px;overflow:hidden;background:#8db86a;box-shadow:0 5px 18px #193b2518}
+canvas{width:100%;height:auto;display:block;touch-action:none}
+.mapbadge{position:absolute;top:8px;left:8px;background:#ffffffdf;border-radius:9px;padding:7px 9px;font-size:10px;font-weight:800;pointer-events:none}
+.maphelp{position:absolute;right:8px;bottom:8px;background:#183d2bdc;color:white;border-radius:8px;padding:7px 9px;font-size:10px;pointer-events:none}
+.toolbar{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:10px}
+.tool{border:1px solid #e0e6d8;background:white;border-radius:11px;padding:9px 3px;color:#31523b;font-size:10px;font-weight:750}
+.tool span{display:block;font-size:21px;margin-bottom:4px}
+.tool.active{background:#245f3d;color:white;border-color:#245f3d}
+.sectiontitle{font-size:15px;font-weight:850;margin:4px 2px 10px}
+.shop{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.card{background:white;border:1px solid #e4e8dd;border-radius:14px;overflow:hidden}
+.photo{height:105px;background:linear-gradient(145deg,#b6d59b,#dfe7b9);position:relative}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.fallback{display:none;position:absolute;inset:0;place-items:center;font-size:48px}
+.cardbody{padding:10px}
+.card h3{font-size:13px;margin:0 0 4px}
+.card p{font-size:10px;color:#7b8679;margin:0 0 8px;min-height:25px}
+.cardbottom{display:flex;align-items:center;justify-content:space-between;gap:5px}
+.price{font-size:11px;font-weight:850;color:#97701f}
+.buy{background:#245f3d;color:white;border-radius:8px;padding:8px 9px;font-size:10px;font-weight:800}
+.buy:disabled{background:#dfe5da;color:#6d796a}
+.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.action{padding:12px 8px;border-radius:11px;background:#edf3e8;color:#245f3d;font-size:11px;font-weight:800}
+.action.primary{background:#245f3d;color:white}
+.task{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid #edf0e8}
 .task:last-child{border-bottom:0}
-.task-icon{font-size:22px}
-.task-info{flex:1}
-.task-info strong{font-size:12px;display:block}
-.task-info span{font-size:10px;color:#7c8879}
-.task-reward{font-size:11px;font-weight:800;color:#9b7423}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:650px;display:grid;grid-template-columns:repeat(4,1fr);padding:9px 8px calc(9px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #e7ebdf;z-index:10}
-.nav-btn{background:transparent;color:#849080;font-size:10px;font-weight:700;padding:4px}
-.nav-btn span{display:block;font-size:21px;margin-bottom:3px}
-.nav-btn.active{color:var(--green)}
-.toast{position:fixed;z-index:20;bottom:85px;left:50%;transform:translateX(-50%);background:#183e2b;color:white;padding:12px 17px;border-radius:12px;font-size:12px;font-weight:700;box-shadow:0 6px 25px #0002;max-width:90%;text-align:center}
-.hidden{display:none!important}
-.empty{grid-column:1/-1;padding:20px;background:white;border-radius:14px;text-align:center;font-size:12px;color:#738071}
-@media(min-width:500px){.animal-photo{height:145px}.park{height:330px}}
+.taskicon{font-size:23px}
+.taskinfo{flex:1}
+.taskinfo strong{font-size:12px;display:block}
+.taskinfo span{font-size:10px;color:#7a8778}
+.task button{background:#eaf2df;color:#245f3d;border-radius:8px;padding:8px;font-size:10px;font-weight:800}
+.nav{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:0 12px 12px;background:white;border:1px solid #e4e7d9;padding:6px;border-radius:14px}
+.nav button{background:transparent;border-radius:9px;padding:8px 2px;font-size:10px;color:#73816f;font-weight:750}
+.nav button span{display:block;font-size:20px;margin-bottom:3px}
+.nav button.active{background:#e7f0df;color:#245f3d}
+.view.hidden{display:none}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#173b2b;color:white;border-radius:12px;padding:12px 16px;font-size:12px;font-weight:750;z-index:10;max-width:90%;text-align:center;box-shadow:0 5px 20px #0003}
+@media(min-width:540px){main{padding:16px}.photo{height:140px}.tool{padding:12px 5px}}
 </style>
 </head>
 <body>
 <div class="app">
 <header>
-  <div class="brand"><div class="logo">🌿</div><div><h1>Hayvanat Bahçem</h1><div class="subtitle">Kendi doğal yaşam parkını kur!</div></div></div>
-  <div class="levelrow"><span id="levelText">SEVİYE 1 · ÇIRAK BAKICI</span><span id="xpText">0 / 100 XP</span></div>
-  <div class="progress"><div id="xpBar"></div></div>
+ <div class="brand">
+  <div><h1>🌿 Hayvanat Bahçem</h1><div class="sub">Doğal yaşamını kendin tasarla</div></div>
+  <div class="pill">⭐ Seviye <span id="level">1</span></div>
+ </div>
+ <div class="stats">
+  <div class="stat"><label>🪙 Altın</label><strong id="coins">800</strong></div>
+  <div class="stat"><label>👥 Ziyaretçi</label><strong id="visitors">0</strong></div>
+  <div class="stat"><label>🐾 Hayvan</label><strong id="animals">0</strong></div>
+ </div>
+ <div class="xpwrap"><div class="xptext"><span>Bakıcı deneyimi</span><span id="xptext">0 / 100 XP</span></div><div class="xp"><div id="xpbar"></div></div></div>
 </header>
 
-<div class="stats">
-  <div class="stat"><div class="stat-icon">🪙</div><div class="stat-value" id="coins">500</div><div class="stat-label">Altın</div></div>
-  <div class="stat"><div class="stat-icon">👥</div><div class="stat-value" id="visitors">0</div><div class="stat-label">Ziyaretçi</div></div>
-  <div class="stat"><div class="stat-icon">🐾</div><div class="stat-value" id="animalCount">0</div><div class="stat-label">Hayvanın</div></div>
-</div>
-
 <main>
-<section id="home">
-  <div class="section-head"><h2>Doğal yaşam parkın</h2><span class="muted">🌳 Seviye <span id="levelSmall">1</span></span></div>
-  <div class="park">
-    <div class="tree t1">🌳</div><div class="tree t2">🌲</div><div class="tree t3">🌴</div><div class="tree t4">🌳</div><div class="tree t5">🌿</div>
-    <div class="enclosure e1"><div class="fence"></div><span class="habitat-label">SAVAN ALANI</span><div id="habitat1"></div></div>
-    <div class="enclosure e2"><div class="fence"></div><span class="habitat-label">ORMAN ALANI</span><div id="habitat2"></div></div>
-    <div class="enclosure e3"><div class="fence"></div><span class="habitat-label">DOĞAL GÖLET</span><div id="habitat3"></div></div>
-    <div class="park-caption">🌱 Doğa dostu yaşam alanı</div>
+ <section class="view" id="parkView">
+  <div class="panel">
+   <div class="row"><h2>🗺️ Park haritan</h2><span class="small">Serbest yerleştirme</span></div>
+   <div id="message">Bir nesne seç, ardından haritada istediğin yere dokun.</div>
+   <div style="height:10px"></div>
+   <div class="mapwrap">
+    <canvas id="map" width="600" height="760"></canvas>
+    <div class="mapbadge" id="modebadge">✋ Taşıma modu</div>
+    <div class="maphelp">Dokun: yerleştir · Sürükle: taşı</div>
+   </div>
+   <div class="toolbar">
+    <button class="tool active" data-mode="move"><span>✋</span>Taşı</button>
+    <button class="tool" data-mode="tree"><span>🌳</span>Ağaç · 25</button>
+    <button class="tool" data-mode="bush"><span>🌿</span>Çalı · 15</button>
+    <button class="tool" data-mode="pond"><span>💧</span>Gölet · 80</button>
+    <button class="tool" data-mode="fence"><span>🪵</span>Yaşam alanı · 100</button>
+    <button class="tool" data-mode="bench"><span>🪑</span>Bank · 35</button>
+    <button class="tool" data-mode="flower"><span>🌼</span>Çiçek · 10</button>
+    <button class="tool" data-mode="delete"><span>🗑️</span>Sil</button>
+   </div>
   </div>
-  <div class="notice"><div class="notice-icon">🎟️</div><div style="flex:1"><strong>Ziyaretçi biletleri</strong><p id="ticketInfo">Bilet geliri toplamak için aşağıya dokun.</p></div><button class="primary" onclick="collect()">Geliri al</button></div>
-  <div class="section-head"><h2>Bakım zamanı</h2><span class="muted">Hayvanlarını mutlu tut</span></div>
-  <div class="animal-grid" id="ownedAnimals"></div>
-</section>
-
-<section id="store" class="hidden">
-  <div class="section-head"><h2>Hayvan koleksiyonu</h2><span class="muted">Yeni dostlar edin</span></div>
-  <div class="animal-grid" id="shopAnimals"></div>
-</section>
-
-<section id="tasks" class="hidden">
-  <div class="section-head"><h2>Günlük görevler</h2><span class="muted">Ödül kazan</span></div>
-  <div class="tasks" id="taskList"></div>
-  <div class="notice"><div class="notice-icon">💡</div><div><strong>Bakıcı ipucu</strong><p>Hayvanlarına bak, bilet gelirlerini topla ve yeni türler satın al. Böylece deneyim kazanırsın!</p></div></div>
-</section>
-
-<section id="care" class="hidden">
-  <div class="section-head"><h2>Park yönetimi</h2></div>
-  <div class="tasks">
-    <div class="task"><div class="task-icon">🧹</div><div class="task-info"><strong>Parkı temizle</strong><span>Ziyaretçi memnuniyetini artır</span></div><button class="small-btn" onclick="cleanPark()">Temizle · 20 🪙</button></div>
-    <div class="task"><div class="task-icon">🌼</div><div class="task-info"><strong>Doğayı güzelleştir</strong><span>Parkına bakım yap</span></div><button class="small-btn" onclick="beautify()">Güzelleştir · 30 🪙</button></div>
-    <div class="task"><div class="task-icon">💾</div><div class="task-info"><strong>Kayıt durumu</strong><span>İlerlemen bu telefonda otomatik saklanır</span></div><button class="small-btn" onclick="saveGame();toast('Oyun kaydedildi!')">Kaydet</button></div>
-    <div class="task"><div class="task-icon">🔄</div><div class="task-info"><strong>Yeni oyun başlat</strong><span>Mevcut ilerlemeni siler</span></div><button class="small-btn" onclick="resetGame()">Sıfırla</button></div>
+  <div class="panel">
+   <div class="row"><h2>🎟️ Ziyaretçi gelirleri</h2><span class="small">Bilet satışları</span></div>
+   <p class="small">Hayvanların ve park dekorasyonların ziyaretçi sayını artırır. Biletlerini toplayarak para kazan.</p>
+   <div class="actions"><button class="action primary" onclick="collectIncome()">💰 Geliri topla</button><button class="action" onclick="dailyBonus()">🎁 Günlük ödül</button></div>
   </div>
-</section>
+  <div class="panel">
+   <div class="row"><h2>🧤 Bakım</h2><span class="small">Hayvanlarını mutlu tut</span></div>
+   <div class="actions" style="margin-top:10px"><button class="action" onclick="feedAll()">🍎 Hayvanları besle · 20</button><button class="action" onclick="cleanPark()">🧹 Parkı temizle · 20</button></div>
+  </div>
+ </section>
+
+ <section class="view hidden" id="shopView">
+  <div class="panel"><h2>🐾 Hayvan pazarı</h2><p class="small">Bir hayvan satın al, ardından haritada istediğin yere dokunarak yerleştir.</p><div class="shop" id="shop"></div></div>
+ </section>
+
+ <section class="view hidden" id="taskView">
+  <div class="panel"><h2>🏆 Görevler</h2><p class="small">Görevleri tamamla ve ödüllerini al.</p><div id="tasks"></div></div>
+ </section>
+
+ <section class="view hidden" id="manageView">
+  <div class="panel"><h2>⚙️ Park yönetimi</h2><div class="task"><div class="taskicon">💾</div><div class="taskinfo"><strong>Oyunu kaydet</strong><span>İlerlemeni bu cihazda sakla</span></div><button onclick="save();say('Oyun kaydedildi!')">Kaydet</button></div><div class="task"><div class="taskicon">↩️</div><div class="taskinfo"><strong>Son yerleştirmeyi geri al</strong><span>Yanlış yerleştirdiğin nesneyi kaldır</span></div><button onclick="undo()">Geri al</button></div><div class="task"><div class="taskicon">🔄</div><div class="taskinfo"><strong>Yeni oyun</strong><span>Bütün ilerlemeyi siler</span></div><button onclick="resetGame()">Sıfırla</button></div></div>
+  <div class="panel"><h2>ℹ️ Nasıl oynanır?</h2><p class="small">Hayvan pazarından bir hayvan satın al. Harita sekmesine dön ve haritada bir yere dokunarak yerleştir. Taşı modunda nesneleri sürükleyebilirsin. Ağaç, çalı, gölet ve bank ekleyerek parkını geliştir. Bilet gelirini topla ve seviye atla.</p></div>
+ </section>
 </main>
-
-<nav class="bottom-nav">
-  <button class="nav-btn active" data-tab="home" onclick="tab('home',this)"><span>🏡</span>Parkım</button>
-  <button class="nav-btn" data-tab="store" onclick="tab('store',this)"><span>🐘</span>Hayvanlar</button>
-  <button class="nav-btn" data-tab="tasks" onclick="tab('tasks',this)"><span>🏆</span>Görevler</button>
-  <button class="nav-btn" data-tab="care" onclick="tab('care',this)"><span>⚙️</span>Yönetim</button>
+<nav class="nav">
+ <button class="active" data-view="parkView"><span>🗺️</span>Parkım</button>
+ <button data-view="shopView"><span>🐘</span>Hayvanlar</button>
+ <button data-view="taskView"><span>🏆</span>Görevler</button>
+ <button data-view="manageView"><span>⚙️</span>Yönetim</button>
 </nav>
 </div>
-<div id="toast" class="toast hidden"></div>
+<div class="toast" id="toast" hidden></div>
 
 <script>
-const species=[
-{id:'rabbit',name:'Tavşan',emoji:'🐇',price:100,habitat:3,desc:'Sevimli ve bakımı kolay.',img:'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?auto=format&fit=crop&w=600&q=80'},
-{id:'turtle',name:'Kaplumbağa',emoji:'🐢',price:150,habitat:3,desc:'Sakin gölet dostu.',img:'https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?auto=format&fit=crop&w=600&q=80'},
-{id:'monkey',name:'Maymun',emoji:'🐒',price:250,habitat:2,desc:'Meraklı ve hareketli.',img:'https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?auto=format&fit=crop&w=600&q=80'},
-{id:'lion',name:'Aslan',emoji:'🦁',price:400,habitat:1,desc:'Savananın görkemli kralı.',img:'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=600&q=80'},
-{id:'elephant',name:'Fil',emoji:'🐘',price:550,habitat:1,desc:'Nazik ve güçlü dev.',img:'https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?auto=format&fit=crop&w=600&q=80'},
-{id:'panda',name:'Panda',emoji:'🐼',price:700,habitat:2,desc:'Bambu seven sevimli dost.',img:'https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?auto=format&fit=crop&w=600&q=80'}
+const animals=[
+ {id:'rabbit',name:'Tavşan',emoji:'🐇',price:100,inc:8,img:'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?auto=format&fit=crop&w=500&q=80',desc:'Küçük, sevimli ve hareketli.'},
+ {id:'turtle',name:'Kaplumbağa',emoji:'🐢',price:140,inc:10,img:'https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?auto=format&fit=crop&w=500&q=80',desc:'Sakin bir doğa dostu.'},
+ {id:'monkey',name:'Maymun',emoji:'🐒',price:220,inc:15,img:'https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?auto=format&fit=crop&w=500&q=80',desc:'Meraklı ve oyuncu.'},
+ {id:'lion',name:'Aslan',emoji:'🦁',price:350,inc:25,img:'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=500&q=80',desc:'Savananın güçlü kralı.'},
+ {id:'elephant',name:'Fil',emoji:'🐘',price:500,inc:35,img:'https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?auto=format&fit=crop&w=500&q=80',desc:'Görkemli ve nazik dev.'},
+ {id:'panda',name:'Panda',emoji:'🐼',price:650,inc:40,img:'https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?auto=format&fit=crop&w=500&q=80',desc:'Bambu ormanlarının yıldızı.'}
 ];
-const defaultState={coins:500,visitors:0,xp:0,level:1,owned:[],fed:[],cleaned:false,beautified:false,claimed:false,lastDay:new Date().toDateString(),tasksDone:[]};
+const costs={tree:25,bush:15,pond:80,fence:100,bench:35,flower:10};
+const names={move:'✋ Taşıma modu',tree:'🌳 Ağaç yerleştir',bush:'🌿 Çalı yerleştir',pond:'💧 Gölet yerleştir',fence:'🪵 Yaşam alanı yerleştir',bench:'🪑 Bank yerleştir',flower:'🌼 Çiçek yerleştir',delete:'🗑️ Silme modu'};
+const defaults={coins:800,visitors:0,xp:0,level:1,objects:[],claimed:false,bonusDay:'',fedDay:'',cleanDay:'',done:[],lastDay:new Date().toDateString()};
 let state;
-try{state={...defaultState,...JSON.parse(localStorage.getItem('hayvanatBahcemSave')||'{}')};}catch(e){state={...defaultState};}
-function saveGame(){try{localStorage.setItem('hayvanatBahcemSave',JSON.stringify(state));}catch(e){}}
-function money(n){return Math.floor(n).toLocaleString('tr-TR')}
-function toast(message){const el=document.getElementById('toast');el.textContent=message;el.classList.remove('hidden');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.classList.add('hidden'),2300)}
-function addXP(n){state.xp+=n;while(state.xp>=100){state.xp-=100;state.level++;state.coins+=100;toast('Seviye atladın! +100 altın 🎉')} }
-function tab(id,btn){document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render()}
-function buy(id){const s=species.find(x=>x.id===id);if(state.owned.includes(id)){toast('Bu hayvan zaten parkında!');return}if(state.coins<s.price){toast('Yeterli altının yok!');return}state.coins-=s.price;state.owned.push(id);addXP(20);state.visitors+=10;saveGame();render();toast(s.name+' parkına katıldı! 🐾')}
-function feed(id){if(state.fed.includes(id)){toast('Bu hayvanı bugün zaten besledin.');return}if(state.coins<10){toast('Beslemek için 10 altın gerekli.');return}state.coins-=10;state.fed.push(id);addXP(10);saveGame();render();toast('Hayvanın mutlu oldu! +10 XP')}
-function collect(){if(state.claimed){toast('Bugünkü bilet gelirini zaten topladın!');return}const income=state.owned.length*35+25;state.coins+=income;state.visitors+=state.owned.length*8+5;state.claimed=true;addXP(15);saveGame();render();toast('Bilet geliri: +'+income+' altın!')}
-function cleanPark(){if(state.cleaned){toast('Parkın zaten temiz!');return}if(state.coins<20){toast('20 altının yok.');return}state.coins-=20;state.cleaned=true;state.visitors+=10;addXP(10);saveGame();render();toast('Park tertemiz oldu! +10 XP')}
-function beautify(){if(state.beautified){toast('Parkını bugün zaten güzelleştirdin!');return}if(state.coins<30){toast('30 altının yok.');return}state.coins-=30;state.beautified=true;state.visitors+=15;addXP(10);saveGame();render();toast('Parkın daha güzel! +15 ziyaretçi')}
-function resetGame(){if(confirm('Bütün ilerlemen silinsin mi?')){localStorage.removeItem('hayvanatBahcemSave');state={...defaultState,owned:[],fed:[],tasksDone:[]};saveGame();render();toast('Yeni oyun başladı!')}}
-function imageHTML(s){return '<div class="animal-photo"><img src="'+s.img+'" alt="'+s.name+'" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><div class="animal-fallback">'+s.emoji+'</div></div>'}
-function render(){
- document.getElementById('coins').textContent=money(state.coins);
- document.getElementById('visitors').textContent=money(state.visitors);
- document.getElementById('animalCount').textContent=state.owned.length;
- document.getElementById('levelText').textContent='SEVİYE '+state.level+' · '+(state.level<3?'ÇIRAK BAKICI':state.level<6?'UZMAN BAKICI':'PARK MÜDÜRÜ');
- document.getElementById('levelSmall').textContent=state.level;
- document.getElementById('xpText').textContent=state.xp+' / 100 XP';
- document.getElementById('xpBar').style.width=state.xp+'%';
- document.getElementById('ticketInfo').textContent=state.claimed?'Yarın yeni bilet geliri toplayabilirsin.':'Biletlerden altın ve ziyaretçi kazan!';
- const owned=species.filter(s=>state.owned.includes(s.id));
- document.getElementById('ownedAnimals').innerHTML=owned.length?owned.map(s=>'<article class="card">'+imageHTML(s)+'<div class="card-body"><h3>'+s.emoji+' '+s.name+'</h3><p>'+(state.fed.includes(s.id)?'Bugün beslendi.':'Bakım ve beslenme bekliyor.')+'</p><button class="secondary" style="width:100%" onclick="feed(\''+s.id+'\')" '+(state.fed.includes(s.id)?'disabled':'')+'>'+(state.fed.includes(s.id)?'✓ Beslendi':'🍎 Besle · 10 🪙')+'</button></div></article>').join(''):'<div class="empty">Henüz hayvanın yok. Hayvanlar bölümünden ilk dostunu satın al! 🐾</div>';
- document.getElementById('shopAnimals').innerHTML=species.map(s=>'<article class="card">'+imageHTML(s)+'<div class="card-body"><h3>'+s.emoji+' '+s.name+'</h3><p>'+s.desc+'</p><div class="card-foot"><span class="price">🪙 '+money(s.price)+'</span><button class="small-btn" onclick="buy(\''+s.id+'\')" '+(state.owned.includes(s.id)?'disabled':'')+'>'+(state.owned.includes(s.id)?'Sahip olundu':'Satın al')+'</button></div></div></article>').join('');
- const tasks=[
- ['🐾','İlk hayvanını al','Bir hayvan satın al',state.owned.length>0,50,'buy'],
- ['🍎','Bakımını yap','Bir hayvanını besle',state.fed.length>0,30,'feed'],
- ['🎟️','Bilet geliri kazan','Bilet gelirini topla',state.claimed,40,'ticket'],
- ['🌳','Parkını güzelleştir','Doğayı güzelleştir',state.beautified,30,'beautify']
+try{state={...defaults,...JSON.parse(localStorage.getItem('hb_v3')||'{}')};}catch(e){state={...defaults,objects:[]};}
+state.objects=Array.isArray(state.objects)?state.objects:[];
+let mode='move',selectedAnimal=null,dragId=null,dragging=false,undoState=null;
+const canvas=document.getElementById('map'),ctx=canvas.getContext('2d');
+let visitors=[];
+let seed=1729;
+function rand(){seed=(seed*9301+49297)%233280;return seed/233280}
+function save(){try{localStorage.setItem('hb_v3',JSON.stringify(state));}catch(e){}}
+function say(s){const el=document.getElementById('toast');el.textContent=s;el.hidden=false;clearTimeout(window.tt);window.tt=setTimeout(()=>el.hidden=true,2300);document.getElementById('message').textContent=s}
+function addXP(n){state.xp+=n;while(state.xp>=100){state.xp-=100;state.level++;state.coins+=100;say('Seviye atladın! +100 altın 🎉')}}
+function getAnimal(id){return animals.find(a=>a.id===id)}
+function makeObj(type,x,y,extra={}){return {id:Date.now()+Math.random(),type,x,y,...extra}}
+function getPlacedAnimalCount(){return state.objects.filter(o=>o.type==='animal').length}
+function setMode(m){mode=m;selectedAnimal=null;document.querySelectorAll('.tool').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));document.getElementById('modebadge').textContent=names[m]||'🐾 Hayvan yerleştir';document.getElementById('message').textContent=m==='move'?'Bir nesneyi sürükleyerek taşıyabilirsin.':m==='delete'?'Silmek istediğin nesneye dokun.':(names[m]||'Hayvan yerleştir')+' için haritada istediğin yere dokun.';draw()}
+document.querySelectorAll('.tool').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==b.dataset.view));if(b.dataset.view==='parkView')draw()}));
+function draw(){
+ const W=canvas.width,H=canvas.height;
+ ctx.clearRect(0,0,W,H);
+ seed=1729;
+ // Natural grass base
+ ctx.fillStyle='#91bd6b';ctx.fillRect(0,0,W,H);
+ for(let i=0;i<1800;i++){let x=rand()*W,y=rand()*H,r=1+rand()*3;ctx.fillStyle=['#7fac5d','#a6ca7d','#86b464','#b0cd83'][Math.floor(rand()*4)];ctx.globalAlpha=.35+rand()*.3;ctx.beginPath();ctx.ellipse(x,y,r,r*.6,rand(),0,Math.PI*2);ctx.fill()}
+ ctx.globalAlpha=1;
+ // Meandering walking paths
+ ctx.lineCap='round';ctx.lineJoin='round';
+ ctx.beginPath();ctx.moveTo(-20,170);ctx.bezierCurveTo(140,110,170,260,310,280);ctx.bezierCurveTo(470,300,440,390,630,410);ctx.strokeStyle='#b7a17b';ctx.lineWidth=65;ctx.stroke();
+ ctx.beginPath();ctx.moveTo(-20,170);ctx.bezierCurveTo(140,110,170,260,310,280);ctx.bezierCurveTo(470,300,440,390,630,410);ctx.strokeStyle='#e6d2a5';ctx.lineWidth=53;ctx.stroke();
+ ctx.beginPath();ctx.moveTo(170,-20);ctx.bezierCurveTo(230,120,90,250,170,400);ctx.bezierCurveTo(260,530,160,650,250,790);ctx.strokeStyle='#b7a17b';ctx.lineWidth=55;ctx.stroke();
+ ctx.beginPath();ctx.moveTo(170,-20);ctx.bezierCurveTo(230,120,90,250,170,400);ctx.bezierCurveTo(260,530,160,650,250,790);ctx.strokeStyle='#e6d2a5';ctx.lineWidth=44;ctx.stroke();
+ // Fixed pond
+ ctx.beginPath();ctx.ellipse(450,115,105,72,-.25,0,Math.PI*2);ctx.fillStyle='#4ca8bd';ctx.fill();ctx.lineWidth=8;ctx.strokeStyle='#78b86e';ctx.stroke();
+ ctx.beginPath();ctx.ellipse(450,115,77,47,-.25,0,Math.PI*2);ctx.strokeStyle='#8bd0d9';ctx.lineWidth=3;ctx.stroke();
+ ctx.fillStyle='#ffffff80';ctx.beginPath();ctx.ellipse(430,105,25,5,-.25,0,Math.PI*2);ctx.fill();
+ // Park entrance
+ ctx.fillStyle='#65462d';ctx.fillRect(260,720,100,23);ctx.fillStyle='#d9c08d';ctx.fillRect(270,725,80,12);ctx.fillStyle='#fff';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText('GİRİŞ',310,716);
+ // Default shrub clusters
+ for(let i=0;i<18;i++){let x=(i*137+35)%570,y=(i*193+45)%700;if((x>330&&x<550&&y<200)||(x>210&&x<420&&y>250&&y<330))continue;drawBush(x,y,8+rand()*5)}
+ // Placed objects
+ state.objects.forEach(o=>drawObject(o));
+ // Visitors move along park paths
+ for(let i=0;i<Math.min(state.visitors,18);i++){let t=(performance.now()/18000+i*.137)%1;let x=20+t*550,y=170+Math.sin(t*7)*100;ctx.fillStyle='#ffffff';ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();ctx.fillStyle=['#d95d39','#3d6fc1','#e9b943','#704d9c'][i%4];ctx.beginPath();ctx.arc(x,y-1,3.3,0,Math.PI*2);ctx.fill()}
+}
+function drawBush(x,y,r){ctx.fillStyle='#497a3c';ctx.beginPath();ctx.arc(x+2,y+3,r,0,7);ctx.fill();ctx.fillStyle='#5f9949';ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.fillStyle='#83b85d';ctx.beginPath();ctx.arc(x-r*.25,y-r*.3,r*.55,0,7);ctx.fill()}
+function drawObject(o){
+ const x=o.x,y=o.y;
+ ctx.save();ctx.translate(x,y);
+ if(o.type==='tree'){ctx.fillStyle='#735033';ctx.fillRect(-5,1,10,19);drawBush(0,-7,20);drawBush(-10,-13,13);drawBush(10,-13,13)}
+ else if(o.type==='bush'){drawBush(0,0,14);drawBush(10,2,9)}
+ else if(o.type==='pond'){ctx.fillStyle='#5ca8b6';ctx.beginPath();ctx.ellipse(0,0,37,25,.2,0,7);ctx.fill();ctx.strokeStyle='#d1d6a0';ctx.lineWidth=5;ctx.stroke();ctx.strokeStyle='#b1e0df';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(-3,-2,20,9,-.3,0,7);ctx.stroke()}
+ else if(o.type==='fence'){ctx.fillStyle='#d8c08b';ctx.fillRect(-36,-27,72,54);ctx.strokeStyle='#795c38';ctx.lineWidth=4;ctx.strokeRect(-36,-27,72,54);for(let xx=-27;xx<=27;xx+=18){ctx.beginPath();ctx.moveTo(xx,-27);ctx.lineTo(xx,27);ctx.stroke()}ctx.fillStyle='#f7efcf';ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.fillText('YAŞAM ALANI',0,0)}
+ else if(o.type==='bench'){ctx.fillStyle='#795033';ctx.fillRect(-15,-6,30,12);ctx.fillRect(-13,-13,26,5);ctx.fillStyle='#4e3826';ctx.fillRect(-12,6,3,7);ctx.fillRect(9,6,3,7)}
+ else if(o.type==='flower'){ctx.fillStyle='#4c8c42';ctx.fillRect(-2,0,4,12);for(let i=0;i<5;i++){ctx.fillStyle=['#efb6ca','#f4d66c','#f3f0e5'][i%3];ctx.beginPath();ctx.arc(Math.cos(i*1.256)*6,Math.sin(i*1.256)*6,4,0,7);ctx.fill()}ctx.fillStyle='#d49b3e';ctx.beginPath();ctx.arc(0,0,4,0,7);ctx.fill()}
+ else if(o.type==='animal'){
+   const a=getAnimal(o.species);if(!a){ctx.restore();return}
+   // Ground shadow and photo-like badge
+   ctx.fillStyle='#25432b44';ctx.beginPath();ctx.ellipse(2,9,20,8,0,0,7);ctx.fill();
+   const img=animalImages[o.species];
+   if(img&&img.complete&&img.naturalWidth){
+     ctx.save();ctx.beginPath();ctx.arc(0,0,19,0,7);ctx.clip();ctx.drawImage(img,-19,-19,38,38);ctx.restore();
+     ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,19,0,7);ctx.stroke();
+   }else{ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(0,0,19,0,7);ctx.fill();ctx.font='26px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(a.emoji,0,1)}
+   ctx.fillStyle='#173b2b';ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(a.name,0,21);
+ }
+ if(o.id===dragId){ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,25,0,7);ctx.stroke()}
+ ctx.restore();
+}
+const animalImages={};
+animals.forEach(a=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>draw();img.src=a.img;animalImages[a.id]=img});
+function pointerPos(e){const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}}
+function hit(x,y){for(let i=state.objects.length-1;i>=0;i--){const o=state.objects[i];if(Math.hypot(x-o.x,y-o.y)<(o.type==='pond'?42:o.type==='animal'?26:25))return o}return null}
+canvas.addEventListener('pointerdown',e=>{e.preventDefault();const p=pointerPos(e);dragging=false;
+ if(mode==='move'){const o=hit(p.x,p.y);if(o){dragId=o.id;undoState=JSON.stringify(state.objects);canvas.setPointerCapture(e.pointerId)}}
+ else if(mode==='delete'){const o=hit(p.x,p.y);if(o){undoState=JSON.stringify(state.objects);state.objects=state.objects.filter(q=>q.id!==o.id);save();render();say('Nesne kaldırıldı.')}else say('Silmek için bir nesneye dokun.')}
+ else if(selectedAnimal){placeAnimal(p.x,p.y,selectedAnimal)}
+ else if(costs[mode]!=null){placeDecoration(p.x,p.y,mode)}
+ draw();
+});
+canvas.addEventListener('pointermove',e=>{if(!dragId)return;const p=pointerPos(e);const o=state.objects.find(q=>q.id===dragId);if(o){o.x=Math.max(20,Math.min(580,p.x));o.y=Math.max(25,Math.min(735,p.y));dragging=true;draw()}});
+canvas.addEventListener('pointerup',()=>{if(dragId){dragId=null;save();render()}});
+canvas.addEventListener('pointercancel',()=>{dragId=null;save()});
+function placeAnimal(x,y,id){const a=getAnimal(id);if(!a)return;undoState=JSON.stringify(state.objects);state.objects.push(makeObj('animal',x,y,{species:id}));selectedAnimal=null;mode='move';document.querySelectorAll('.tool').forEach(b=>b.classList.toggle('active',b.dataset.mode==='move'));state.visitors+=8;addXP(15);save();render();say(a.name+' parkına yerleştirildi!')}
+function placeDecoration(x,y,type){const cost=costs[type];if(state.coins<cost){say('Yeterli altının yok!');return}undoState=JSON.stringify(state.objects);state.coins-=cost;state.objects.push(makeObj(type,x,y));addXP(3);save();render();say('Yeni nesne parkına eklendi!')}
+function buyAnimal(id){const a=getAnimal(id);if(!a)return;if(state.coins<a.price){say('Yeterli altının yok!');return}state.coins-=a.price;selectedAnimal=id;mode='animal';document.querySelectorAll('.tool').forEach(b=>b.classList.remove('active'));document.getElementById('modebadge').textContent=a.emoji+' '+a.name+' yerleştir';document.getElementById('message').textContent=a.name+' satın alındı. Parkım sekmesine dön ve haritada istediğin yere dokun.';save();render();document.querySelector('[data-view="parkView"]').click();say(a.name+' satın alındı! Haritada bir yere dokun.')}
+function collectIncome(){const n=getPlacedAnimalCount();const income=20+n*22+Math.min(state.visitors,100);state.coins+=income;state.visitors+=n*5+3;addXP(12);save();render();say('Bilet gelirleri: +'+income+' altın!')}
+function dailyBonus(){const day=new Date().toDateString();if(state.bonusDay===day){say('Günlük ödülünü zaten aldın.');return}state.bonusDay=day;state.coins+=150;addXP(15);save();render();say('Günlük ödül: +150 altın!')}
+function feedAll(){if(state.coins<20){say('Beslemek için 20 altın gerekli.');return}if(!getPlacedAnimalCount()){say('Önce parkına hayvan yerleştir.');return}state.coins-=20;state.fedDay=new Date().toDateString();addXP(15);save();render();say('Hayvanların beslendi! +15 XP')}
+function cleanPark(){if(state.coins<20){say('Temizlik için 20 altın gerekli.');return}state.coins-=20;state.cleanDay=new Date().toDateString();state.visitors+=10;addXP(10);save();render();say('Parkın tertemiz oldu!')}
+function undo(){if(!undoState){say('Geri alınacak bir işlem yok.');return}state.objects=JSON.parse(undoState);undoState=null;save();render();say('Son yerleştirme geri alındı.')}
+function resetGame(){if(confirm('Bütün oyun ilerlemen silinsin mi?')){localStorage.removeItem('hb_v3');state={...defaults,objects:[],done:[]};save();render();draw();say('Yeni oyun başladı!')}}
+function renderShop(){document.getElementById('shop').innerHTML=animals.map(a=>'<article class="card"><div class="photo"><img src="'+a.img+'" alt="'+a.name+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><div class="fallback">'+a.emoji+'</div></div><div class="cardbody"><h3>'+a.emoji+' '+a.name+'</h3><p>'+a.desc+'</p><div class="cardbottom"><span class="price">🪙 '+a.price+'</span><button class="buy" onclick="buyAnimal(\''+a.id+'\')">Satın al</button></div></div></article>').join('')}
+function renderTasks(){
+ const count=getPlacedAnimalCount(),decor=state.objects.filter(o=>o.type!=='animal').length;
+ const list=[
+  {id:'animal',icon:'🐾',title:'İlk hayvanını yerleştir',desc:'Parkına bir hayvan ekle',ok:count>=1,reward:50},
+  {id:'decor',icon:'🌳',title:'Parkını güzelleştir',desc:'Bir dekorasyon nesnesi ekle',ok:decor>=1,reward:30},
+  {id:'income',icon:'🎟️',title:'Bilet geliri kazan',desc:'Ziyaretçilerden gelir elde et',ok:state.visitors>=8,reward:40},
+  {id:'five',icon:'🦁',title:'Küçük bir koleksiyon',desc:'Üç hayvan yerleştir',ok:count>=3,reward:100}
  ];
- document.getElementById('taskList').innerHTML=tasks.map(t=>'<div class="task"><div class="task-icon">'+t[0]+'</div><div class="task-info"><strong>'+t[1]+'</strong><span>'+t[2]+'</span></div><div class="task-reward">'+(state.tasksDone.includes(t[5])?'✓ Tamamlandı':'+'+t[4]+' 🪙')+'</div>'+(t[3]&&!state.tasksDone.includes(t[5])?'<button class="small-btn" onclick="claimTask(\''+t[5]+'\','+t[4]+')">Al</button>':'')+'</div>').join('');
- renderHabitat();
+ document.getElementById('tasks').innerHTML=list.map(t=>'<div class="task"><div class="taskicon">'+t.icon+'</div><div class="taskinfo"><strong>'+t.title+'</strong><span>'+t.desc+'</span></div>'+(state.done.includes(t.id)?'<span class="small">✓ Alındı</span>':t.ok?'<button onclick="claimTask(\''+t.id+'\','+t.reward+')">+'+t.reward+' 🪙 Al</button>':'<span class="small">Devam ediyor</span>')+'</div>').join('');
 }
-function claimTask(id,reward){if(state.tasksDone.includes(id))return;state.tasksDone.push(id);state.coins+=reward;addXP(10);saveGame();render();toast('Görev tamamlandı! +'+reward+' altın 🏆')}
-function renderHabitat(){
- const positions={1:[['a1','left:35%;top:30%'],['a2','left:16%;top:55%']],2:[['a3','left:38%;top:30%'],['a4','left:62%;top:55%']],3:[['a5','left:45%;top:30%']]};
- [1,2,3].forEach(n=>{const el=document.getElementById('habitat'+n);el.innerHTML='';});
- const els={1:document.getElementById('habitat1'),2:document.getElementById('habitat2'),3:document.getElementById('habitat3')};
- species.filter(s=>state.owned.includes(s.id)).forEach((s,i)=>{const box=els[s.habitat];const a=document.createElement('span');a.className='animal';a.textContent=s.emoji;a.style.left=(8+(i%3)*28)+'%';a.style.top=(30+(Math.floor(i/3)%2)*38)+'%';a.style.fontSize=s.id==='elephant'?'33px':'28px';box.appendChild(a)});
+function claimTask(id,reward){if(state.done.includes(id))return;state.done.push(id);state.coins+=reward;addXP(10);save();render();say('Görev tamamlandı! +'+reward+' altın 🏆')}
+function render(){
+ document.getElementById('coins').textContent=Math.floor(state.coins).toLocaleString('tr-TR');
+ document.getElementById('visitors').textContent=Math.floor(state.visitors).toLocaleString('tr-TR');
+ document.getElementById('animals').textContent=getPlacedAnimalCount();
+ document.getElementById('level').textContent=state.level;
+ document.getElementById('xptext').textContent=state.xp+' / 100 XP';
+ document.getElementById('xpbar').style.width=state.xp+'%';
+ renderShop();renderTasks();draw();
 }
-function newDay(){if(state.lastDay!==new Date().toDateString()){state.lastDay=new Date().toDateString();state.claimed=false;state.fed=[];state.cleaned=false;state.beautified=false;state.tasksDone=[];saveGame()}}
-newDay();render();
+render();
 </script>
 </body>
 </html>
