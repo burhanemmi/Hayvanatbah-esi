@@ -2,33 +2,33 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Hayvanat Bahçem</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans-serif;background:#b9e5ff;touch-action:none}
-canvas{display:block}
-#hud{position:fixed;top:10px;left:10px;z-index:5;background:#173b29e8;color:white;padding:10px 13px;border-radius:12px;font-size:14px;line-height:1.6;pointer-events:none}
-#help{position:fixed;right:10px;top:10px;z-index:5;background:#ffffffdf;color:#173b29;padding:8px;border-radius:10px;font-size:12px;max-width:150px}
-#joystick{position:fixed;bottom:24px;left:22px;width:126px;height:126px;border:3px solid #fff;background:#ffffff70;border-radius:50%;z-index:10;touch-action:none}
-#stick{position:absolute;width:52px;height:52px;left:34px;top:34px;border:3px solid white;border-radius:50%;background:#27794b;pointer-events:none}
-#zoom{position:fixed;right:14px;bottom:24px;z-index:10;display:flex;flex-direction:column;align-items:center;gap:8px}
-.zbtn{width:48px;height:48px;border:0;border-radius:14px;background:#173b29;color:white;font-size:28px;font-weight:bold;touch-action:manipulation}
-#zoomlabel{background:#ffffffdf;padding:5px 8px;border-radius:8px;font-size:11px}
-#message{display:none;position:fixed;bottom:165px;left:50%;transform:translateX(-50%);z-index:8;background:#173b29e8;color:white;padding:10px 14px;border-radius:12px;text-align:center}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+#hud{position:fixed;top:8px;left:8px;z-index:5;background:#173b29eF;color:white;padding:9px 12px;border-radius:12px;font-size:13px;line-height:1.6;pointer-events:none}
+#help{position:fixed;right:8px;top:8px;z-index:5;background:#ffffffed;color:#173b29;padding:8px;border-radius:10px;font-size:11px;max-width:140px}
+#joystick{position:fixed;bottom:20px;left:18px;width:120px;height:120px;border:3px solid white;background:#ffffff70;border-radius:50%;z-index:10;touch-action:none}
+#stick{position:absolute;width:48px;height:48px;left:33px;top:33px;border:3px solid white;border-radius:50%;background:#27794b;pointer-events:none}
+#zoom{position:fixed;right:14px;bottom:20px;z-index:10;display:flex;flex-direction:column;align-items:center;gap:7px}
+.zbtn{width:48px;height:48px;border:0;border-radius:14px;background:#173b29;color:white;font-size:28px;font-weight:bold}
+#zoomlabel{background:#ffffffdf;padding:5px 7px;border-radius:8px;font-size:11px}
+#message{display:none;position:fixed;bottom:155px;left:50%;transform:translateX(-50%);z-index:8;background:#173b29ed;color:white;padding:10px 14px;border-radius:12px;text-align:center;font-size:14px;max-width:85vw}
 #shop{display:none;position:fixed;z-index:20;top:50%;left:50%;transform:translate(-50%,-50%);width:min(340px,90vw);padding:18px;background:white;border-radius:18px;color:#173b29;box-shadow:0 5px 30px #0006}
 #close{float:right;border:0;padding:7px;border-radius:8px}
-.buy{width:100%;margin-top:8px;padding:12px;border:0;border-radius:10px;background:#27824c;color:white;font-weight:bold}
+.buy{width:100%;margin-top:8px;padding:12px;border:0;border-radius:10px;background:#27824c;color:white;font-weight:bold;font-size:15px}
 </style>
 </head>
 <body>
 <div id="hud">
 <b>🐾 HAYVANAT BAHÇEM</b><br>
 💰 Para: <span id="money">1000</span><br>
-🐾 Hayvanlar: <span id="count">2</span><br>
+🐾 Hayvanlar: <span id="count">4</span><br>
 ⭐ Seviye: <span id="level">1</span>
 </div>
-<div id="help">Joystick ile yürü. Bölmelere yaklaşınca dokun. Telefonu yatay tut.</div>
+<div id="help">Joystick ile yürü. Hayvan bölmesine yaklaş ve ekrana dokun. Telefonu yatay tutabilirsin.</div>
 <div id="joystick"><div id="stick"></div></div>
 <div id="zoom">
 <button class="zbtn" id="zin">+</button>
@@ -43,243 +43,250 @@ canvas{display:block}
 <div id="shopButtons"></div>
 </div>
 
-<script type="module">
-import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+<canvas id="game"></canvas>
+<script>
+'use strict';
 
-const scene=new THREE.Scene();
-scene.background=new THREE.Color(0xb9e5ff);
-scene.fog=new THREE.Fog(0xb9e5ff,55,130);
+const canvas=document.getElementById('game');
+const ctx=canvas.getContext('2d');
 
-const camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,250);
-const renderer=new THREE.WebGLRenderer({antialias:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
-renderer.setSize(innerWidth,innerHeight);
-renderer.shadowMap.enabled=true;
-document.body.appendChild(renderer.domElement);
-
-scene.add(new THREE.HemisphereLight(0xffffff,0x668252,2));
-const sun=new THREE.DirectionalLight(0xffffff,2);
-sun.position.set(-20,35,15);
-sun.castShadow=true;
-sun.shadow.mapSize.set(1024,1024);
-scene.add(sun);
-
-const mat=c=>new THREE.MeshStandardMaterial({color:c,roughness:1});
-const grass=mat(0x70b84e),darkGrass=mat(0x55963e),
-road=mat(0xd6c39a),wood=mat(0x79502d),leaf=mat(0x287b38);
-
-function box(w,h,d,material,x,y,z){
- const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
- m.position.set(x,y,z);
- m.castShadow=true;
- m.receiveShadow=true;
- scene.add(m);
- return m;
+let W=innerWidth,H=innerHeight,DPR=1;
+function resize(){
+ DPR=Math.min(devicePixelRatio||1,2);
+ W=innerWidth;H=innerHeight;
+ canvas.width=Math.round(W*DPR);
+ canvas.height=Math.round(H*DPR);
+ canvas.style.width=W+'px';
+ canvas.style.height=H+'px';
+ ctx.setTransform(DPR,0,0,DPR,0,0);
 }
+addEventListener('resize',resize);
+resize();
 
-// ANA ZEMİN: Tek yüzey; aynı yükseklikte ikinci büyük zemin yok.
-const ground=new THREE.Mesh(new THREE.PlaneGeometry(150,150),grass);
-ground.rotation.x=-Math.PI/2;
-ground.position.y=-.15;
-ground.receiveShadow=true;
-scene.add(ground);
-
-// Yollar ana zeminin üstünde, birbirleriyle çakışmayacak yükseklikte.
-box(6,.06,100,road,0,-.08,0);
-box(100,.06,6,road,0,-.075,0);
-box(3,.05,65,road,-18,-.065,0);
-box(3,.05,65,road,18,-.065,0);
-
-const pens={
- lion:{x:-29,z:-19,w:17,d:18,name:'Aslan',emoji:'🦁',price:450},
- rabbit:{x:29,z:-19,w:17,d:18,name:'Tavşan',emoji:'🐰',price:150},
- elephant:{x:-29,z:20,w:17,d:18,name:'Fil',emoji:'🐘',price:600},
- turtle:{x:29,z:20,w:17,d:18,name:'Kaplumbağa',emoji:'🐢',price:200}
-};
-
-function makePen(p){
- // Her bölmenin tek zemin plakası; ana zeminin üstünde.
- box(p.w,.08,p.d,darkGrass,p.x,-.075,p.z);
- const y=.7,h=1.4;
- for(let i=0;i<=8;i++){
-  const x=p.x-p.w/2+i*p.w/8;
-  box(.13,h,.13,wood,x,y,p.z-p.d/2);
-  box(.13,h,.13,wood,x,y,p.z+p.d/2);
- }
- for(let i=0;i<=8;i++){
-  const z=p.z-p.d/2+i*p.d/8;
-  box(.13,h,.13,wood,p.x-p.w/2,y,z);
-  box(.13,h,.13,wood,p.x+p.w/2,y,z);
- }
- for(const yy of [.3,1]){
-  box(p.w,.12,.12,wood,p.x,yy,p.z-p.d/2);
-  box(p.w,.12,.12,wood,p.x,yy,p.z+p.d/2);
-  box(.12,.12,p.d,wood,p.x-p.w/2,yy,p.z);
-  box(.12,.12,p.d,wood,p.x+p.w/2,yy,p.z);
- }
- box(3,.8,.16,wood,p.x,1.7,p.z-p.d/2-.12);
-}
-Object.values(pens).forEach(makePen);
-
-// Ağaçlar
-function tree(x,z){
- box(.35,1.8,.35,mat(0x79502d),x,.8,z);
- const top=new THREE.Mesh(new THREE.SphereGeometry(1.05,12,10),leaf);
- top.position.set(x,2,z);
- top.castShadow=true;
- scene.add(top);
-}
-for(let z=-42;z<=42;z+=10){tree(-43,z);tree(43,z)}
-for(let x=-35;x<=35;x+=12){tree(x,-44);tree(x,44)}
-
-// Büfe
-const buffet={x:0,z:-13};
-box(5,2.2,3,mat(0x9a6238),0,1,-13);
-box(5.2,.25,3.2,mat(0xe9c44d),0,2.25,-13);
-box(2,.7,.15,mat(0xffffff),0,1.6,-14.58);
-
-// Oyuncu
-const player=new THREE.Group();
-const shirt=mat(0x287ed0),skin=mat(0xf0bd91),pants=mat(0x28344b);
-const torso=new THREE.Mesh(new THREE.BoxGeometry(.7,1,.4),shirt);
-torso.position.y=1.1;torso.castShadow=true;player.add(torso);
-const head=new THREE.Mesh(new THREE.SphereGeometry(.3,14,12),skin);
-head.position.y=1.85;head.castShadow=true;player.add(head);
-for(const x of [-.22,.22]){
- const leg=new THREE.Mesh(new THREE.BoxGeometry(.22,.7,.25),pants);
- leg.position.set(x,.35,0);leg.castShadow=true;player.add(leg);
-}
-player.position.set(0,0,9);
-scene.add(player);
-
-const owned={lion:false,rabbit:true,elephant:false,turtle:true};
-const animals=[];
-function makeAnimal(type,p,offset=0){
- const g=new THREE.Group();
- g.position.set(p.x+(offset?1.5:-1),.08,p.z);
- scene.add(g);
- const colors={lion:0xd99a39,rabbit:0xe9e4d9,elephant:0x858e9c,turtle:0x438d4b};
- const body=mat(colors[type]);
- function part(geo,material,x,y,z,sx=1,sy=1,sz=1){
-  const m=new THREE.Mesh(geo,material);
-  m.position.set(x,y,z);m.scale.set(sx,sy,sz);
-  m.castShadow=true;g.add(m);
- }
- if(type==='turtle'){
-  part(new THREE.SphereGeometry(.65,14,10),mat(0x327640),0,.4,0,1,.55,1);
-  part(new THREE.SphereGeometry(.28,12,8),mat(0x5cbf58),.65,.4,0);
-  for(const x of [-.4,.4])for(const z of [-.38,.38])
-   part(new THREE.SphereGeometry(.17,8,6),mat(0x5cbf58),x,.15,z);
- }else{
-  part(new THREE.SphereGeometry(.65,14,10),body,0,.7,0,1.2,.72,.8);
-  part(new THREE.SphereGeometry(.36,14,10),body,.65,1.05,0);
-  for(const x of [-.4,.4])for(const z of [-.35,.35])
-   part(new THREE.CylinderGeometry(.12,.15,.5,8),body,x,.3,z);
-  if(type==='lion')part(new THREE.SphereGeometry(.45,12,10),mat(0x8a5129),.65,1.05,0);
-  if(type==='elephant')part(new THREE.CylinderGeometry(.1,.16,.55,10),body,1,.75,0);
-  if(type==='rabbit'){
-   part(new THREE.BoxGeometry(.15,.65,.15),body,.7,1.5,-.16);
-   part(new THREE.BoxGeometry(.15,.65,.15),body,.7,1.5,.16);
-  }
-  for(const z of [-.13,.13])
-   part(new THREE.SphereGeometry(.05,8,6),mat(0x222222),.96,1.12,z);
- }
- animals.push(g);
- return g;
-}
-const animalGroups={};
-for(const [type,p] of Object.entries(pens)){
- animalGroups[type]=[];
- if(owned[type]){
-  animalGroups[type].push(makeAnimal(type,p,0));
-  animalGroups[type].push(makeAnimal(type,p,1));
+const player={x:0,y:12,dir:0};
+let zoom=1;
 let money=1000;
-let zoom=10;
-const moneyEl=document.getElementById('money');
-const countEl=document.getElementById('count');
-const levelEl=document.getElementById('level');
-const shop=document.getElementById('shop');
-const shopTitle=document.getElementById('shopTitle');
-const shopText=document.getElementById('shopText');
-const shopButtons=document.getElementById('shopButtons');
-const message=document.getElementById('message');
-let msgTimer;
+let joyX=0,joyY=0,joyActive=false,pointerId=null;
+let messageTimer=null;
 
-function say(text){
- message.textContent=text;
- message.style.display='block';
- clearTimeout(msgTimer);
- msgTimer=setTimeout(()=>message.style.display='none',2300);
+const pens=[
+ {id:'lion',x:-28,y:-19,w:16,h:16,name:'Aslan',emoji:'🦁',price:450,owned:false,animals:[]},
+ {id:'rabbit',x:28,y:-19,w:16,h:16,name:'Tavşan',emoji:'🐰',price:150,owned:true,animals:[{x:25,y:-20},{x:30,y:-17}]},
+ {id:'elephant',x:-28,y:19,w:16,h:16,name:'Fil',emoji:'🐘',price:600,owned:false,animals:[]},
+ {id:'turtle',x:28,y:19,w:16,h:16,name:'Kaplumbağa',emoji:'🐢',price:200,owned:true,animals:[{x:26,y:18},{x:30,y:21}]}
+];
+const trees=[];
+for(let y=-42;y<=42;y+=9){trees.push({x:-43,y},{x:43,y})}
+for(let x=-34;x<=34;x+=11){trees.push({x,y:-44},{x,y:44})}
+
+const buffet={x:0,y:-13};
+const randDecor=[
+ {x:-9,y:-7},{x:9,y:-7},{x:-10,y:8},{x:10,y:8},
+ {x:-15,y:0},{x:15,y:0}
+];
+
+function roundedRect(x,y,w,h,r,color){
+ ctx.fillStyle=color;
+ ctx.beginPath();
+ ctx.roundRect(x,y,w,h,r);
+ ctx.fill();
+}
+function textAt(text,x,y,size=1){
+ ctx.font=(12*size)+'px Arial';
+ ctx.textAlign='center';
+ ctx.textBaseline='middle';
+ ctx.fillStyle='#173b29';
+ ctx.fillText(text,x,y);
+}
+function drawGround(){
+ ctx.fillStyle='#72bd50';
+ ctx.fillRect(-100,-100,200,200);
+
+ // Yollar
+ ctx.fillStyle='#d7c49a';
+ ctx.fillRect(-3,-50,6,100);
+ ctx.fillRect(-50,-3,100,6);
+ ctx.fillRect(-19,-32,2.5,64);
+ ctx.fillRect(17,-32,2.5,64);
+
+ // Küçük çimen desenleri
+ ctx.fillStyle='#65ad46';
+ for(let x=-38;x<=38;x+=7){
+  for(let y=-36;y<=36;y+=8){
+   if(Math.abs(x)>5||Math.abs(y)>5)ctx.fillRect(x,y,.7,.7);
+  }
+ }
+}
+function drawTree(t){
+ ctx.fillStyle='#69452a';
+ ctx.fillRect(t.x-.28,t.y-.1,.56,1.3);
+ ctx.fillStyle='#287b38';
+ ctx.beginPath();ctx.arc(t.x,t.y-.45,1.15,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#419447';
+ ctx.beginPath();ctx.arc(t.x-.3,t.y-.8,.55,0,Math.PI*2);ctx.fill();
+}
+function drawPen(p){
+ const x=p.x-p.w/2,y=p.y-p.h/2;
+ ctx.fillStyle='#55963e';
+ ctx.fillRect(x,y,p.w,p.h);
+
+ // Bölme zemini
+ ctx.strokeStyle='#79502d';
+ ctx.lineWidth=.22;
+ ctx.strokeRect(x,y,p.w,p.h);
+ ctx.lineWidth=.12;
+ for(let i=1;i<12;i++){
+  const xx=x+i*p.w/12;
+  ctx.beginPath();ctx.moveTo(xx,y);ctx.lineTo(xx,y+p.h);ctx.stroke();
+ }
+ for(let yy of [y+1,y+p.h-1]){
+  ctx.lineWidth=.22;
+  ctx.beginPath();ctx.moveTo(x,yy);ctx.lineTo(x+p.w,yy);ctx.stroke();
+ }
+ // Giriş boşluğu
+ ctx.fillStyle='#d7c49a';
+ ctx.fillRect(p.x-.8,y+p.h-.2,1.6,.5);
+
+ textAt(p.emoji,p.x,p.y-.3,1.5);
+ textAt(p.name,p.x,p.y+2.4,.9);
+ if(!p.owned){
+  roundedRect(p.x-3,p.y+3.3,6,1.6,.3,'#173b29');
+  textAt(p.price+' 💰',p.x,p.y+4.1,.8);
+ }
+}
+function drawBuffet(){
+ roundedRect(-3,-15.3,6,4.3,.3,'#9a6238');
+ ctx.fillStyle='#e9c44d';
+ ctx.fillRect(-3.2,-15.5,6.4,.65);
+ textAt('🍔 BÜFE',0,-13.2,1);
+}
+function drawAnimal(emoji,x,y){
+ ctx.fillStyle='#0002';
+ ctx.beginPath();ctx.ellipse(x,y+.55,.8,.35,0,0,Math.PI*2);ctx.fill();
+ textAt(emoji,x,y,1.45);
+}
+function drawPlayer(){
+ // Gölge
+ ctx.fillStyle='#0003';
+ ctx.beginPath();ctx.ellipse(player.x,player.y+.55,.65,.28,0,0,Math.PI*2);ctx.fill();
+ // Oyuncu gövdesi ve başı
+ ctx.fillStyle='#287ed0';
+ ctx.beginPath();ctx.arc(player.x,player.y,.55,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#f0bd91';
+ ctx.beginPath();ctx.arc(player.x,player.y-.7,.36,0,Math.PI*2);ctx.fill();
+ ctx.strokeStyle='#173b29';ctx.lineWidth=.12;
+ ctx.beginPath();
+ ctx.moveTo(player.x,player.y);
+ ctx.lineTo(player.x+Math.sin(player.dir)*.7,player.y+Math.cos(player.dir)*.7);
+ ctx.stroke();
+}
+function drawWorld(){
+ ctx.clearRect(0,0,W,H);
+ ctx.fillStyle='#b9e5ff';ctx.fillRect(0,0,W,H);
+
+ const scale=zoom*Math.min(W,H)/42;
+ ctx.save();
+ ctx.translate(W/2-player.x*scale,H/2-player.y*scale);
+ ctx.scale(scale,scale);
+
+ drawGround();
+ for(const t of trees)drawTree(t);
+ for(const p of pens)drawPen(p);
+ drawBuffet();
+ for(const p of pens){
+  for(const a of p.animals)drawAnimal(p.emoji,a.x,a.y);
+ }
+ for(const d of randDecor){
+  textAt('🌼',d.x,d.y,.8);
+ }
+ drawPlayer();
+
+ ctx.restore();
+}
+function animalCount(){
+ return pens.reduce((sum,p)=>sum+p.animals.length,0);
 }
 function refresh(){
- moneyEl.textContent=money;
- countEl.textContent=animals.length;
- levelEl.textContent=Math.max(1,Math.floor(animals.length/2)+1);
+ document.getElementById('money').textContent=money;
+ document.getElementById('count').textContent=animalCount();
+ document.getElementById('level').textContent=Math.max(1,Math.floor(animalCount()/2)+1);
 }
-function openShop(title,desc,buttons){
- shopTitle.textContent=title;
- shopText.textContent=desc;
- shopButtons.innerHTML='';
- buttons.forEach(b=>{
-  const el=document.createElement('button');
-  el.className='buy';
-  el.textContent=b.label;
-  el.onclick=b.action;
-  shopButtons.appendChild(el);
- });
- shop.style.display='block';
+function say(message){
+ const el=document.getElementById('message');
+ el.textContent=message;
+ el.style.display='block';
+ clearTimeout(messageTimer);
+ messageTimer=setTimeout(()=>el.style.display='none',2200);
 }
-document.getElementById('close').onclick=()=>shop.style.display='none';
-
-function buyAnimal(type){
- const p=pens[type];
- if(owned[type]){say('Bu hayvan zaten bahçende!');return}
- if(money<p.price){say('Yeterli paran yok!');return}
- money-=p.price;
- owned[type]=true;
- animalGroups[type].push(makeAnimal(type,p,0));
- refresh();
- shop.style.display='none';
- say(p.name+' satın alındı!');
+function openShop(title,description,buttons){
+ document.getElementById('shopTitle').textContent=title;
+ document.getElementById('shopText').textContent=description;
+ const area=document.getElementById('shopButtons');
+ area.innerHTML='';
+ for(const b of buttons){
+  const button=document.createElement('button');
+  button.className='buy';
+  button.textContent=b.label;
+  button.onclick=b.action;
+  area.appendChild(button);
+ }
+ document.getElementById('shop').style.display='block';
 }
+document.getElementById('close').onclick=()=>{
+ document.getElementById('shop').style.display='none';
+};
 
 function nearestTarget(){
- let best=null,dist=Infinity;
- for(const [type,p] of Object.entries(pens)){
-  const d=Math.hypot(player.position.x-p.x,player.position.z-p.z);
-  if(d<dist){dist=d;best={type,p,d}}
+ let best=null,bestDist=Infinity;
+ for(const p of pens){
+  const d=Math.hypot(player.x-p.x,player.y-p.y);
+  if(d<bestDist){bestDist=d;best={pen:p,distance:d};}
  }
- const bd=Math.hypot(player.position.x-buffet.x,player.position.z-buffet.z);
- if(bd<dist)best={type:'buffet',p:buffet,d:bd};
+ const bd=Math.hypot(player.x-buffet.x,player.y-buffet.y);
+ if(bd<bestDist)best={buffet:true,distance:bd};
  return best;
 }
 function interact(){
- const t=nearestTarget();
- if(!t||t.d>8){say('Bir hayvan bölmesine veya büfeye yaklaş.');return}
- if(t.type==='buffet'){
-  openShop('🍔 Bahçe Büfesi','Büfeden para kazan.',[
+ const target=nearestTarget();
+ if(!target||target.distance>12){
+  say('Bir hayvan bölmesine veya büfeye yaklaş!');
+  return;
+ }
+ if(target.buffet){
+  openShop('🍔 Bahçe Büfesi','Büfeden para kazanabilirsin.',[
    {label:'+100 para kazan',action:()=>{
-    money+=100;refresh();shop.style.display='none';say('+100 para kazandın!');
+    money+=100;refresh();
+    document.getElementById('shop').style.display='none';
+    say('+100 para kazandın!');
+   }}
+  ]);
+  return;
+ }
+ const p=target.pen;
+ if(p.owned){
+  openShop(p.emoji+' '+p.name,'Hayvanlarınla ilgilen.',[
+   {label:'Hayvanlara bak: +50 para',action:()=>{
+    money+=50;refresh();
+    document.getElementById('shop').style.display='none';
+    say('+50 para kazandın!');
    }}
   ]);
  }else{
-  const p=t.p;
-  if(owned[t.type]){
-   openShop(p.emoji+' '+p.name,'Hayvanlarınla ilgilen.',[
-    {label:'Hayvanlara bak: +50 para',action:()=>{
-     money+=50;refresh();shop.style.display='none';say('+50 para kazandın!');
-    }}
-   ]);
-  }else{
-   openShop(p.emoji+' '+p.name,'Bu hayvanı satın almak ister misin?',[
-    {label:'Satın al: '+p.price+' para',action:()=>buyAnimal(t.type)}
-   ]);
-  }
+  openShop(p.emoji+' '+p.name,'Bu hayvanı satın almak ister misin?',[
+   {label:'Satın al: '+p.price+' para',action:()=>{
+    if(money<p.price){say('Yeterli paran yok!');return;}
+    money-=p.price;
+    p.owned=true;
+    p.animals.push({x:p.x-1,y:p.y},{x:p.x+1,y:p.y+1});
+    refresh();
+    document.getElementById('shop').style.display='none';
+    say(p.name+' satın alındı!');
+   }}
+  ]);
  }
 }
 
-// Joystick yönü: yukarı negatif dy, dolayısıyla ileri hareket z azalır.
-let joyX=0,joyY=0,joyActive=false,pointerId=null;
+// Joystick kontrolleri
 const joystick=document.getElementById('joystick');
 const stick=document.getElementById('stick');
 
@@ -287,19 +294,20 @@ function moveStick(e){
  const r=joystick.getBoundingClientRect();
  let dx=e.clientX-(r.left+r.width/2);
  let dy=e.clientY-(r.top+r.height/2);
- const max=37,len=Math.hypot(dx,dy);
- if(len>max){dx=dx/len*max;dy=dy/len*max}
+ const max=34;
+ const len=Math.hypot(dx,dy);
+ if(len>max){dx=dx/len*max;dy=dy/len*max;}
  joyX=dx/max;
  joyY=dy/max;
- stick.style.left=(34+dx)+'px';
- stick.style.top=(34+dy)+'px';
+ stick.style.left=(33+dx)+'px';
+ stick.style.top=(33+dy)+'px';
 }
 function resetStick(){
  joyActive=false;
  pointerId=null;
  joyX=0;joyY=0;
- stick.style.left='34px';
- stick.style.top='34px';
+ stick.style.left='33px';
+ stick.style.top='33px';
 }
 joystick.addEventListener('pointerdown',e=>{
  e.preventDefault();
@@ -314,62 +322,38 @@ joystick.addEventListener('pointermove',e=>{
 joystick.addEventListener('pointerup',resetStick);
 joystick.addEventListener('pointercancel',resetStick);
 
+// Yakınlaştırma
 document.getElementById('zin').addEventListener('click',()=>{
- zoom=Math.max(4,zoom-2);
+ zoom=Math.min(1.8,zoom+.15);
 });
 document.getElementById('zout').addEventListener('click',()=>{
- zoom=Math.min(24,zoom+2);
+ zoom=Math.max(.55,zoom-.15);
 });
 
-// Ekrana dokununca yakındaki bölmeyle etkileşim.
-renderer.domElement.addEventListener('click',()=>{
- const t=nearestTarget();
- if(t&&t.d<8)interact();
-});
+// Oyun alanına dokununca yakındaki yerle etkileşim
+canvas.addEventListener('click',interact);
 
-// Oyuncu hareketi ve kamera.
-const clock=new THREE.Clock();
-const camTarget=new THREE.Vector3();
+// Oyun döngüsü
+let lastTime=0;
+function loop(time){
+ requestAnimationFrame(loop);
+ const dt=Math.min((time-lastTime)/1000||0,.04);
+ lastTime=time;
 
-function animate(){
- requestAnimationFrame(animate);
- const dt=Math.min(clock.getDelta(),.04);
- const speed=7;
-
- // Yukarı basış joyY < 0: z azalır, oyuncu ileri gider.
- // Aşağı basış joyY > 0: z artar, oyuncu geri gider.
- player.position.x+=joyX*speed*dt;
- player.position.z+=joyY*speed*dt;
-
- player.position.x=Math.max(-46,Math.min(46,player.position.x));
- player.position.z=Math.max(-46,Math.min(46,player.position.z));
+ const speed=10;
+ player.x+=joyX*speed*dt;
+ player.y+=joyY*speed*dt;
+ player.x=Math.max(-39,Math.min(39,player.x));
+ player.y=Math.max(-39,Math.min(39,player.y));
 
  if(Math.abs(joyX)+Math.abs(joyY)>.1){
-  player.rotation.y=Math.atan2(joyX,joyY);
+  player.dir=Math.atan2(joyX,joyY);
  }
 
- // Kamerayı oyuncunun arkasında tut ve zoom değerini uygula.
- const fx=Math.sin(player.rotation.y);
- const fz=Math.cos(player.rotation.y);
- camTarget.set(
-  player.position.x-fx*zoom,
-  player.position.y+zoom*.65+2,
-  player.position.z-fz*zoom
- );
- camera.position.lerp(camTarget,1-Math.exp(-dt*5));
- camera.lookAt(player.position.x,player.position.y+1,player.position.z);
-
- renderer.render(scene,camera);
+ drawWorld();
 }
-
 refresh();
-animate();
-
-window.addEventListener('resize',()=>{
- camera.aspect=innerWidth/innerHeight;
- camera.updateProjectionMatrix();
- renderer.setSize(innerWidth,innerHeight);
-});
+requestAnimationFrame(loop);
 </script>
 </body>
 </html>
