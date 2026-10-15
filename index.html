@@ -1,362 +1,684 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Hayvanat Bahçem</title>
-<style>
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans-serif;background:#b9e5ff;touch-action:none}
-canvas{display:block;width:100%;height:100%;touch-action:none}
-#hud{position:fixed;top:8px;left:8px;z-index:5;background:#173b29eF;color:white;padding:9px 12px;border-radius:12px;font-size:13px;line-height:1.6;pointer-events:none}
-#help{position:fixed;right:8px;top:8px;z-index:5;background:#ffffffed;color:#173b29;padding:8px;border-radius:10px;font-size:11px;max-width:140px}
-#joystick{position:fixed;bottom:20px;left:18px;width:120px;height:120px;border:3px solid white;background:#ffffff70;border-radius:50%;z-index:10;touch-action:none}
-#stick{position:absolute;width:48px;height:48px;left:33px;top:33px;border:3px solid white;border-radius:50%;background:#27794b;pointer-events:none}
-#zoom{position:fixed;right:14px;bottom:20px;z-index:10;display:flex;flex-direction:column;align-items:center;gap:7px}
-.zbtn{width:48px;height:48px;border:0;border-radius:14px;background:#173b29;color:white;font-size:28px;font-weight:bold}
-#zoomlabel{background:#ffffffdf;padding:5px 7px;border-radius:8px;font-size:11px}
-#message{display:none;position:fixed;bottom:155px;left:50%;transform:translateX(-50%);z-index:8;background:#173b29ed;color:white;padding:10px 14px;border-radius:12px;text-align:center;font-size:14px;max-width:85vw}
-#shop{display:none;position:fixed;z-index:20;top:50%;left:50%;transform:translate(-50%,-50%);width:min(340px,90vw);padding:18px;background:white;border-radius:18px;color:#173b29;box-shadow:0 5px 30px #0006}
-#close{float:right;border:0;padding:7px;border-radius:8px}
-.buy{width:100%;margin-top:8px;padding:12px;border:0;border-radius:10px;background:#27824c;color:white;font-weight:bold;font-size:15px}
-</style>
-</head>
-<body>
-<div id="hud">
-<b>🐾 HAYVANAT BAHÇEM</b><br>
-💰 Para: <span id="money">1000</span><br>
-🐾 Hayvanlar: <span id="count">4</span><br>
-⭐ Seviye: <span id="level">1</span>
-</div>
-<div id="help">Joystick ile yürü. Hayvan bölmesine yaklaş ve ekrana dokun. Telefonu yatay tutabilirsin.</div>
-<div id="joystick"><div id="stick"></div></div>
-<div id="zoom">
-<button class="zbtn" id="zin">+</button>
-<div id="zoomlabel">Yakınlaştır</div>
-<button class="zbtn" id="zout">−</button>
-</div>
-<div id="message"></div>
-<div id="shop">
-<button id="close">Kapat ✕</button>
-<h3 id="shopTitle">Hayvan bölmesi</h3>
-<p id="shopText"></p>
-<div id="shopButtons"></div>
-</div>
-
-<canvas id="game"></canvas>
-<script>
-'use strict';
-
-const canvas=document.getElementById('game');
-const ctx=canvas.getContext('2d');
-
-let W=innerWidth,H=innerHeight,DPR=1;
-function resize(){
- DPR=Math.min(devicePixelRatio||1,2);
- W=innerWidth;H=innerHeight;
- canvas.width=Math.round(W*DPR);
- canvas.height=Math.round(H*DPR);
- canvas.style.width=W+'px';
- canvas.style.height=H+'px';
- ctx.setTransform(DPR,0,0,DPR,0,0);
-}
-addEventListener('resize',resize);
-resize();
-
-const player={x:0,y:12,dir:0};
-let zoom=1;
-let money=1000;
-let joyX=0,joyY=0,joyActive=false,pointerId=null;
-let messageTimer=null;
-
-const pens=[
- {id:'lion',x:-28,y:-19,w:16,h:16,name:'Aslan',emoji:'🦁',price:450,owned:false,animals:[]},
- {id:'rabbit',x:28,y:-19,w:16,h:16,name:'Tavşan',emoji:'🐰',price:150,owned:true,animals:[{x:25,y:-20},{x:30,y:-17}]},
- {id:'elephant',x:-28,y:19,w:16,h:16,name:'Fil',emoji:'🐘',price:600,owned:false,animals:[]},
- {id:'turtle',x:28,y:19,w:16,h:16,name:'Kaplumbağa',emoji:'🐢',price:200,owned:true,animals:[{x:26,y:18},{x:30,y:21}]}
-];
-const trees=[];
-for(let y=-42;y<=42;y+=9){trees.push({x:-43,y},{x:43,y})}
-for(let x=-34;x<=34;x+=11){trees.push({x,y:-44},{x,y:44})}
-
-const buffet={x:0,y:-13};
-const randDecor=[
- {x:-9,y:-7},{x:9,y:-7},{x:-10,y:8},{x:10,y:8},
- {x:-15,y:0},{x:15,y:0}
-];
-
-function roundedRect(x,y,w,h,r,color){
- ctx.fillStyle=color;
- ctx.beginPath();
- ctx.roundRect(x,y,w,h,r);
- ctx.fill();
-}
-function textAt(text,x,y,size=1){
- ctx.font=(12*size)+'px Arial';
- ctx.textAlign='center';
- ctx.textBaseline='middle';
- ctx.fillStyle='#173b29';
- ctx.fillText(text,x,y);
-}
-function drawGround(){
- ctx.fillStyle='#72bd50';
- ctx.fillRect(-100,-100,200,200);
-
- // Yollar
- ctx.fillStyle='#d7c49a';
- ctx.fillRect(-3,-50,6,100);
- ctx.fillRect(-50,-3,100,6);
- ctx.fillRect(-19,-32,2.5,64);
- ctx.fillRect(17,-32,2.5,64);
-
- // Küçük çimen desenleri
- ctx.fillStyle='#65ad46';
- for(let x=-38;x<=38;x+=7){
-  for(let y=-36;y<=36;y+=8){
-   if(Math.abs(x)>5||Math.abs(y)>5)ctx.fillRect(x,y,.7,.7);
-  }
+function fence(x,z,w,d){
+ const h=.65;
+ for(let xx=x-w/2;xx<=x+w/2+.01;xx+=1.1){
+  box(xx,h/2,z-w*0+h/2*0,.07,h,.07,fenceMat);
  }
-}
-function drawTree(t){
- ctx.fillStyle='#69452a';
- ctx.fillRect(t.x-.28,t.y-.1,.56,1.3);
- ctx.fillStyle='#287b38';
- ctx.beginPath();ctx.arc(t.x,t.y-.45,1.15,0,Math.PI*2);ctx.fill();
- ctx.fillStyle='#419447';
- ctx.beginPath();ctx.arc(t.x-.3,t.y-.8,.55,0,Math.PI*2);ctx.fill();
-}
-function drawPen(p){
- const x=p.x-p.w/2,y=p.y-p.h/2;
- ctx.fillStyle='#55963e';
- ctx.fillRect(x,y,p.w,p.h);
-
- // Bölme zemini
- ctx.strokeStyle='#79502d';
- ctx.lineWidth=.22;
- ctx.strokeRect(x,y,p.w,p.h);
- ctx.lineWidth=.12;
- for(let i=1;i<12;i++){
-  const xx=x+i*p.w/12;
-  ctx.beginPath();ctx.moveTo(xx,y);ctx.lineTo(xx,y+p.h);ctx.stroke();
+ for(let zz=z-d/2;zz<=z+d/2+.01;zz+=1.1){
+  box(x-w/2,h/2,zz,.07,h,.07,fenceMat);
+  box(x+w/2,h/2,zz,.07,h,.07,fenceMat);
  }
- for(let yy of [y+1,y+p.h-1]){
-  ctx.lineWidth=.22;
-  ctx.beginPath();ctx.moveTo(x,yy);ctx.lineTo(x+p.w,yy);ctx.stroke();
- }
- // Giriş boşluğu
- ctx.fillStyle='#d7c49a';
- ctx.fillRect(p.x-.8,y+p.h-.2,1.6,.5);
-
- textAt(p.emoji,p.x,p.y-.3,1.5);
- textAt(p.name,p.x,p.y+2.4,.9);
- if(!p.owned){
-  roundedRect(p.x-3,p.y+3.3,6,1.6,.3,'#173b29');
-  textAt(p.price+' 💰',p.x,p.y+4.1,.8);
- }
+ box(x,.45,z-d/2,w,.09,.09,fenceMat);
+ box(x,.45,z+d/2,w,.09,.09,fenceMat);
 }
-function drawBuffet(){
- roundedRect(-3,-15.3,6,4.3,.3,'#9a6238');
- ctx.fillStyle='#e9c44d';
- ctx.fillRect(-3.2,-15.5,6.4,.65);
- textAt('🍔 BÜFE',0,-13.2,1);
-}
-function drawAnimal(emoji,x,y){
- ctx.fillStyle='#0002';
- ctx.beginPath();
- ctx.ellipse(x,y+.22,.32,.13,0,0,Math.PI*2);
- ctx.fill();
- textAt(emoji,x,y,.65);
-}
-}
-function drawPlayer(){
- // Gölge
- ctx.fillStyle='#0003';
- ctx.beginPath();ctx.ellipse(player.x,player.y+.55,.65,.28,0,0,Math.PI*2);ctx.fill();
- // Oyuncu gövdesi ve başı
- ctx.fillStyle='#287ed0';
- ctx.beginPath();ctx.arc(player.x,player.y,.55,0,Math.PI*2);ctx.fill();
- ctx.fillStyle='#f0bd91';
- ctx.beginPath();ctx.arc(player.x,player.y-.7,.36,0,Math.PI*2);ctx.fill();
- ctx.strokeStyle='#173b29';ctx.lineWidth=.12;
- ctx.beginPath();
- ctx.moveTo(player.x,player.y);
- ctx.lineTo(player.x+Math.sin(player.dir)*.7,player.y+Math.cos(player.dir)*.7);
- ctx.stroke();
-}
-function drawWorld(){
- ctx.clearRect(0,0,W,H);
- ctx.fillStyle='#b9e5ff';ctx.fillRect(0,0,W,H);
-
- const scale=zoom*Math.min(W,H)/42;
- ctx.save();
- ctx.translate(W/2-player.x*scale,H/2-player.y*scale);
- ctx.scale(scale,scale);
-
- drawGround();
- for(const t of trees)drawTree(t);
- for(const p of pens)drawPen(p);
- drawBuffet();
- for(const p of pens){
-  for(const a of p.animals)drawAnimal(p.emoji,a.x,a.y);
- }
- for(const d of randDecor){
-  textAt('🌼',d.x,d.y,.8);
- }
- drawPlayer();
-
- ctx.restore();
-}
-function animalCount(){
- return pens.reduce((sum,p)=>sum+p.animals.length,0);
-}
-function refresh(){
- document.getElementById('money').textContent=money;
- document.getElementById('count').textContent=animalCount();
- document.getElementById('level').textContent=Math.max(1,Math.floor(animalCount()/2)+1);
-}
-function say(message){
- const el=document.getElementById('message');
- el.textContent=message;
- el.style.display='block';
- clearTimeout(messageTimer);
- messageTimer=setTimeout(()=>el.style.display='none',2200);
-}
-function openShop(title,description,buttons){
- document.getElementById('shopTitle').textContent=title;
- document.getElementById('shopText').textContent=description;
- const area=document.getElementById('shopButtons');
- area.innerHTML='';
- for(const b of buttons){
-  const button=document.createElement('button');
-  button.className='buy';
-  button.textContent=b.label;
-  button.onclick=b.action;
-  area.appendChild(button);
- }
- document.getElementById('shop').style.display='block';
-}
-document.getElementById('close').onclick=()=>{
- document.getElementById('shop').style.display='none';
+const pens={
+ turtle:{x:-27,z:-18,w:10,d:9,color:0x4c9d4b},
+ rabbit:{x:-13,z:-18,w:10,d:9,color:0xd8c4a2},
+ cat:{x:1,z:-18,w:10,d:9,color:0x9e9e9e},
+ dog:{x:15,z:-18,w:10,d:9,color:0xc88a4b},
+ monkey:{x:-27,z:3,w:10,d:9,color:0x8e6a45},
+ hippo:{x:-13,z:3,w:10,d:9,color:0x8b9aa3},
+ giraffe:{x:1,z:3,w:10,d:9,color:0xd9a93e},
+ elephant:{x:15,z:3,w:10,d:9,color:0x929ca5},
+ lion:{x:28,z:3,w:10,d:9,color:0xd99a36}
 };
+for(const p of Object.values(pens)){
+ path(p.x,p.z,p.w+.5,p.d+.5,mat(0x91cc67));
+ fence(p.x,p.z,p.w,p.d);
+}
 
-function nearestTarget(){
- let best=null,bestDist=Infinity;
- for(const p of pens){
-  const d=Math.hypot(player.x-p.x,player.y-p.y);
-  if(d<bestDist){bestDist=d;best={pen:p,distance:d};}
+const animalColors={
+ turtle:0x398d45,rabbit:0xe8ddcb,cat:0x9a9a9a,dog:0xc58b50,
+ monkey:0x8c5c37,hippo:0x8b98a5,giraffe:0xd9a52d,
+ elephant:0x8e999f,lion:0xd18b2c
+};
+const animalNames={
+ turtle:'Kaplumbağa',rabbit:'Tavşan',cat:'Kedi',dog:'Köpek',
+ monkey:'Maymun',hippo:'Su aygırı',giraffe:'Zürafa',
+ elephant:'Fil',lion:'Aslan'
+};
+const prices={
+ turtle:100,rabbit:150,cat:200,dog:250,monkey:350,
+ hippo:500,giraffe:650,elephant:800,lion:1000
+};
+const animalGroups={};
+function makeAnimal(type,pen,count=3){
+ const group=new THREE.Group();
+ const color=animalColors[type]||0xaaaaaa;
+ for(let i=0;i<count;i++){
+  const a=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.SphereGeometry(type==='elephant'? .65:.42,12,9),mat(color));
+  body.position.y=type==='giraffe'?1.05:.55;
+  body.scale.set(1.25,1,1.55);
+  a.add(body);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(type==='elephant'?.38:.29,12,9),mat(color));
+  head.position.set(0,type==='giraffe'?2:.85,.42);
+  a.add(head);
+  if(type==='giraffe'){
+   const neck=new THREE.Mesh(new THREE.CylinderGeometry(.13,.18,.95,8),mat(color));
+   neck.position.set(0,1.45,.28);a.add(neck);
+   for(let k=0;k<5;k++){
+    const spot=new THREE.Mesh(new THREE.SphereGeometry(.08,6,5),mat(0x70461f));
+    spot.position.set((Math.random()-.5)*.25, .8+Math.random()*.9,.7);
+    a.add(spot);
+   }
+  }
+  if(type==='elephant'){
+   const ear=new THREE.Mesh(new THREE.SphereGeometry(.28,8,7),mat(color));
+   ear.position.set(-.36,.88,.35);a.add(ear);
+   const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.09,.13,.65,8),mat(color));
+   trunk.position.set(0,.52,.72);trunk.rotation.x=-.3;a.add(trunk);
+  }
+  if(type==='lion'){
+   const mane=new THREE.Mesh(new THREE.SphereGeometry(.4,10,8),mat(0x79451e));
+   mane.position.set(0,.91,.42);a.add(mane);
+  }
+  if(type==='rabbit'){
+   for(const side of [-1,1]){
+    const ear=new THREE.Mesh(new THREE.SphereGeometry(.09,7,6),mat(color));
+    ear.scale.set(.7,2.2,.7);ear.position.set(side*.13,1.22,.43);a.add(ear);
+   }
+  }
+  for(let leg=0;leg<4;leg++){
+   const l=new THREE.Mesh(new THREE.CylinderGeometry(.07,.08,.34,7),mat(color));
+   l.position.set(leg%2===0?-.22:.22,.24,leg<2?-.25:.3);a.add(l);
+  }
+  a.position.set(pen.x+(Math.random()-.5)*(pen.w-2),0,pen.z+(Math.random()-.5)*(pen.d-2));
+  a.rotation.y=Math.random()*Math.PI*2;
+  group.add(a);
  }
- const bd=Math.hypot(player.x-buffet.x,player.y-buffet.y);
- if(bd<bestDist)best={buffet:true,distance:bd};
- return best;
+ scene.add(group);return group;
+}
+animalGroups.turtle=makeAnimal('turtle',pens.turtle,3);
+animalGroups.rabbit=makeAnimal('rabbit',pens.rabbit,3);
+
+const player=new THREE.Group();
+const body=new THREE.Mesh(new THREE.CapsuleGeometry(.35,.65,4,8),mat(0x2767d8));
+body.position.y=.75;player.add(body);
+const head=new THREE.Mesh(new THREE.SphereGeometry(.27,12,10),mat(0xffd1a2));
+head.position.y=1.35;player.add(head);
+scene.add(player);
+player.position.set(0,0,8);
+
+const visitors=[];
+const hairColors=[0x17120f,0x51331d,0xc99a4c,0xb95727];
+function makeVisitor(){
+ const g=new THREE.Group();
+ const shirtColors=[0xe85d55,0x3c77d4,0xe7bb42,0x7a4ca1,0x41a58b];
+ const shirt=mat(shirtColors[Math.floor(Math.random()*shirtColors.length)]);
+ const skin=mat(0xf1c29a);
+ const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.23,.42,3,7),shirt);
+ torso.position.y=.6;g.add(torso);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.19,9,8),skin);
+ head.position.y=1.08;g.add(head);
+ const hair=new THREE.Mesh(new THREE.SphereGeometry(.2,9,7),mat(hairColors[Math.floor(Math.random()*hairColors.length)]));
+ hair.scale.set(1,Math.random()>.5?.55:1.05,1);
+ hair.position.y=1.19;g.add(hair);
+ if(Math.random()>.5){
+  const backHair=new THREE.Mesh(new THREE.SphereGeometry(.16,8,7),mat(0x51331d));
+  backHair.scale.set(.9,1.2,.6);backHair.position.set(0,1.02,-.12);g.add(backHair);
+ }
+ for(let i=0;i<2;i++){
+  const leg=new THREE.Mesh(new THREE.CylinderGeometry(.06,.07,.35,6),mat(0x33435b));
+  leg.position.set(i===0?-.11:.11,.18,0);g.add(leg);
+ }
+ const angle=Math.random()*Math.PI*2,r=8+Math.random()*18;
+ g.position.set(Math.cos(angle)*r,0,Math.sin(angle)*r);
+ scene.add(g);
+ visitors.push({g,wait:Math.random()*4,dir:Math.random()*Math.PI*2});
+}
+for(let i=0;i<18;i++)makeVisitor();
+
+const trash=[];
+function makeTrash(){
+ const g=new THREE.Group();
+ const can=new THREE.Mesh(new THREE.CylinderGeometry(.12,.1,.25,8),mat(0xffe4a1));
+ can.position.y=.13;g.add(can);
+ const lid=new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.04,8),mat(0x637b6b));
+ lid.position.y=.27;g.add(lid);
+ g.position.set((Math.random()-.5)*34,0,(Math.random()-.5)*38);
+ if(Math.abs(g.position.x)<3&&Math.abs(g.position.z)<4)g.position.x+=6;
+ scene.add(g);trash.push(g);
+}
+for(let i=0;i<24;i++)makeTrash();
+
+const products={
+ cola:{name:'🥤 Kola',cost:10,price:18,stock:5},
+ seeds:{name:'🌻 Ay çekirdeği',cost:8,price:15,stock:5},
+ burger:{name:'🍔 Hamburger',cost:20,price:35,stock:5}
+};
+let money=500,xp=0,level=1,zoom=15;
+let salesOpen=false,kioskNear=false;
+const inventory={cola:0,seeds:0,burger:0};
+const $=id=>document.getElementById(id);
+function say(text){$('message').textContent=text;}
+function updateHUD(){
+ $('money').textContent=money;
+ $('xp').textContent=xp;
+ $('level').textContent=level;
+ $('goal').textContent=`🎯 Hedef: ${level<2?'Bir ürün satın al ve satış yap':level<3?'Yeni hayvan satın al':'Bahçeni büyüt'} · Seviye ${level}`;
+}
+function addXP(n){
+ xp+=n;
+ if(xp>=level*100){xp-=level*100;level++;money+=50;say('Seviye atladın! 50 ₺ ödül kazandın.');}
+ updateHUD();
+}
+function openMenu(force){
+ $('menuPanel').classList.toggle('open',force===undefined?!$('menuPanel').classList.contains('open'):force);
+}
+$('menuToggle').onclick=()=>openMenu();
+$('btnCloseMenu').onclick=()=>openMenu(false);
+$('btnGoal').onclick=()=>{
+ say(`Seviye ${level}: Ziyaretçilere satış yap, çöpleri topla ve yeni hayvanlar al.`);
+ openMenu(false);
+};
+$('btnZoom').onclick=()=>{
+ zoom=zoom>12?9:15;
+ say(zoom<12?'Kamera yaklaştırıldı.':'Kamera uzaklaştırıldı.');
+ openMenu(false);
+};
+$('btnKiosk').onclick=()=>{openKiosk();openMenu(false);};
+$('btnCare').onclick=care;
+$('btnSell').onclick=sellVisit;
+$('actionInteract').onclick=interact;
+$('actionClean').onclick=cleanNearby;
+document.querySelectorAll('[data-buy]').forEach(b=>{
+ b.onclick=()=>buyAnimal(b.dataset.buy);
+});
+
+function buyAnimal(type){
+ const p=pens[type];
+ if(!p){say('Bu hayvan bulunamadı.');return;}
+ if(animalGroups[type]){say('Bu hayvan zaten bahçende var.');return;}
+ if(money<prices[type]){say('Yeterli paran yok!');return;}
+ money-=prices[type];
+ animalGroups[type]=makeAnimal(type,p,3);
+ addXP(25);updateHUD();
+ say(`${animalNames[type]} satın aldın!`);
+ openMenu(false);
+}
+function care(){
+ let count=Object.keys(animalGroups).length;
+ if(!count){say('Önce hayvan satın al.');return;}
+ if(money<10){say('Bakım için 10 ₺ gerekiyor.');return;}
+ money-=10;addXP(10);
+ say('Hayvanların bakımı yapıldı. +10 XP');
+ updateHUD();
+}
+function openKiosk(){
+ $('kioskOverlay').style.display='flex';
+ renderKiosk();
+}
+$('kioskClose').onclick=()=>{$('kioskOverlay').style.display='none';};
+$('kioskOpen').onclick=()=>{
+ salesOpen=!salesOpen;
+ if(salesOpen){say('Büfe açıldı! Ziyaretçiler alışveriş yapabilir.');}
+ else say('Büfe satışa kapatıldı.');
+ renderKiosk();
+};
+function renderKiosk(){
+ const holder=$('kioskProducts');holder.innerHTML='';
+ for(const [key,p] of Object.entries(products)){
+  const card=document.createElement('div');card.className='product';
+  card.innerHTML=`<strong>${p.name}</strong><div>Alış: ${p.cost} ₺</div><div>Satış: ${p.price} ₺</div><div>Stok: ${inventory[key]}</div>`;
+  const buy=document.createElement('button');buy.textContent='5 adet al';
+  buy.onclick=()=>{
+   const total=p.cost*5;
+   if(money<total){say('Bu ürün için yeterli paran yok.');return;}
+   money-=total;inventory[key]+=5;updateHUD();renderKiosk();
+   say(`${p.name}: 5 adet stok aldın.`);
+  };
+  card.appendChild(buy);holder.appendChild(card);
+ }
+ $('kioskStock').textContent=`Stok: Kola ${inventory.cola} · Çekirdek ${inventory.seeds} · Hamburger ${inventory.burger}`;
+ $('kioskOpen').textContent=salesOpen?'🔴 Büfeyi kapat':'🟢 Büfeyi aç / satış yap';
+}
+function sellVisit(){
+ if(!salesOpen){say('Önce büfeyi aç.');openKiosk();return;}
+ const available=Object.keys(inventory).filter(k=>inventory[k]>0);
+ if(!available.length){say('Stokların bitmiş. Büfeden ürün satın al.');openKiosk();return;}
+ const key=available[Math.floor(Math.random()*available.length)];
+ inventory[key]--;money+=products[key].price;addXP(5);
+ say(`${products[key].name} satıldı! +${products[key].price} ₺`);
+ renderKiosk();updateHUD();
 }
 function interact(){
- const target=nearestTarget();
- if(!target||target.distance>12){
-  say('Bir hayvan bölmesine veya büfeye yaklaş!');
-  return;
- }
- if(target.buffet){
-  openShop('🍔 Bahçe Büfesi','Büfeden para kazanabilirsin.',[
-   {label:'+100 para kazan',action:()=>{
-    money+=100;refresh();
-    document.getElementById('shop').style.display='none';
-    say('+100 para kazandın!');
-   }}
-  ]);
-  return;
- }
- const p=target.pen;
- if(p.owned){
-  openShop(p.emoji+' '+p.name,'Hayvanlarınla ilgilen.',[
-   {label:'Hayvanlara bak: +50 para',action:()=>{
-    money+=50;refresh();
-    document.getElementById('shop').style.display='none';
-    say('+50 para kazandın!');
-   }}
-  ]);
- }else{
-  openShop(p.emoji+' '+p.name,'Bu hayvanı satın almak ister misin?',[
-   {label:'Satın al: '+p.price+' para',action:()=>{
-    if(money<p.price){say('Yeterli paran yok!');return;}
-    money-=p.price;
-    p.owned=true;
-    p.animals.push({x:p.x-1,y:p.y},{x:p.x+1,y:p.y+1});
-    refresh();
-    document.getElementById('shop').style.display='none';
-    say(p.name+' satın alındı!');
-   }}
-  ]);
- }
+ const d=player.position.distanceTo(new THREE.Vector3(0,0,0));
+ if(d<7){openKiosk();return;}
+ sellVisit();
+}
+function cleanNearby(){
+ let nearest=-1,dist=2.4;
+ trash.forEach((t,i)=>{
+  const d=player.position.distanceTo(t.position);
+  if(d<dist){dist=d;nearest=i;}
+ });
+ if(nearest>=0){
+  scene.remove(trash[nearest]);trash.splice(nearest,1);
+  money+=5;addXP(5);say('Çöp toplandı! +5 ₺');
+  makeTrash();updateHUD();
+ }else say('Yakınında toplanacak çöp yok.');
 }
 
-// Joystick kontrolleri
-const joystick=document.getElementById('joystick');
-const stick=document.getElementById('stick');
-
-function moveStick(e){
- const r=joystick.getBoundingClientRect();
- let dx=e.clientX-(r.left+r.width/2);
- let dy=e.clientY-(r.top+r.height/2);
- const max=34;
- const len=Math.hypot(dx,dy);
- if(len>max){dx=dx/len*max;dy=dy/len*max;}
- joyX=dx/max;
- joyY=dy/max;
- stick.style.left=(33+dx)+'px';
- stick.style.top=(33+dy)+'px';
+const joy=$('joystick'),stick=$('stick');
+let joyX=0,joyY=0,joyActive=false;
+function joyMove(e){
+ const r=joy.getBoundingClientRect();
+ const cx=r.left+r.width/2,cy=r.top+r.height/2;
+ const dx=e.clientX-cx,dy=e.clientY-cy;
+ const max=34,len=Math.max(1,Math.hypot(dx,dy)),scale=Math.min(1,max/len);
+ joyX=dx/Math.max(max,len);joyY=dy/Math.max(max,len);
+ stick.style.left=(r.width/2-22+dx*scale)+'px';
+ stick.style.top=(r.height/2-22+dy*scale)+'px';
 }
-function resetStick(){
- joyActive=false;
- pointerId=null;
- joyX=0;joyY=0;
- stick.style.left='33px';
- stick.style.top='33px';
-}
-joystick.addEventListener('pointerdown',e=>{
- e.preventDefault();
- joyActive=true;
- pointerId=e.pointerId;
- joystick.setPointerCapture(e.pointerId);
- moveStick(e);
+joy.addEventListener('pointerdown',e=>{
+ joyActive=true;joy.setPointerCapture(e.pointerId);joyMove(e);
 });
-joystick.addEventListener('pointermove',e=>{
- if(joyActive&&e.pointerId===pointerId)moveStick(e);
-});
-joystick.addEventListener('pointerup',resetStick);
-joystick.addEventListener('pointercancel',resetStick);
+joy.addEventListener('pointermove',e=>{if(joyActive)joyMove(e);});
+function resetJoy(){joyActive=false;joyX=0;joyY=0;stick.style.left='29px';stick.style.top='29px';}
+joy.addEventListener('pointerup',resetJoy);
+joy.addEventListener('pointercancel',resetJoy);
 
-// Yakınlaştırma
-document.getElementById('zin').addEventListener('click',()=>{
- zoom=Math.min(1.8,zoom+.15);
-});
-document.getElementById('zout').addEventListener('click',()=>{
- zoom=Math.max(.55,zoom-.15);
+$('rotateButton').onclick=async()=>{
+ try{if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock('landscape');}catch(e){}
+};
+window.addEventListener('resize',()=>{
+ camera.aspect=innerWidth/innerHeight;
+ camera.updateProjectionMatrix();
+ renderer.setSize(innerWidth,innerHeight);
+ renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
 });
 
-// Oyun alanına dokununca yakındaki yerle etkileşim
-canvas.addEventListener('click',interact);
-
-// Oyun döngüsü
-let lastTime=0;
-function loop(time){
- requestAnimationFrame(loop);
- const dt=Math.min((time-lastTime)/1000||0,.04);
- lastTime=time;
-
- const speed=10;
- player.x+=joyX*speed*dt;
- player.y+=joyY*speed*dt;
- player.x=Math.max(-39,Math.min(39,player.x));
- player.y=Math.max(-39,Math.min(39,player.y));
-
- if(Math.abs(joyX)+Math.abs(joyY)>.1){
-  player.dir=Math.atan2(joyX,joyY);
+let last=performance.now(),autoSaleTimer=0;
+function animate(now){
+ requestAnimationFrame(animate);
+ const dt=Math.min((now-last)/1000,.05);last=now;
+ if(joyX||joyY){
+  const speed=7;
+  player.position.x+=joyX*speed*dt;
+  player.position.z+=joyY*speed*dt;
+  player.position.x=THREE.MathUtils.clamp(player.position.x,-40,40);
+  player.position.z=THREE.MathUtils.clamp(player.position.z,-42,42);
+  player.rotation.y=Math.atan2(joyX,joyY);
  }
-
- drawWorld();
+ const target=new THREE.Vector3(player.position.x,0,player.position.z);
+ const behind=new THREE.Vector3(
+  player.position.x+Math.sin(player.rotation.y)*zoom,
+  zoom*.65,
+  player.position.z+Math.cos(player.rotation.y)*zoom
+ );
+ camera.position.lerp(behind,.08);
+ camera.lookAt(target.x,target.y+1,target.z);
+ visitors.forEach(v=>{
+  v.wait-=dt;
+  if(v.wait<=0){v.dir+=(Math.random()-.5)*1.7;v.wait=1+Math.random()*3;}
+  v.g.position.x+=Math.sin(v.dir)*dt*.55;
+  v.g.position.z+=Math.cos(v.dir)*dt*.55;
+  if(Math.abs(v.g.position.x)>36||Math.abs(v.g.position.z)>40)v.dir+=Math.PI;
+  v.g.rotation.y=v.dir;
+ });
+ for(let i=trash.length-1;i>=0;i--){
+  if(player.position.distanceTo(trash[i].position)<.8){
+   scene.remove(trash[i]);trash.splice(i,1);
+   money+=5;addXP(5);updateHUD();
+   say('Çöp topladın! +5 ₺');
+   makeTrash();
+  }
+ }
+ autoSaleTimer+=dt;
+ if(salesOpen&&autoSaleTimer>3){
+  autoSaleTimer=0;
+  if(Math.random()<.65)sellVisit();
+ }
+ for(const group of Object.values(animalGroups)){
+  group.children.forEach((a,i)=>{a.rotation.y+=Math.sin(now*.001+i)*dt*.2;});
+ }
+ renderer.render(scene,camera);
 }
-refresh();
-requestAnimationFrame(loop);
+updateHUD();
+renderKiosk();
+requestAnimationFrame(animate);
+function fence(x,z,w,d){
+ const h=.65;
+ for(let xx=x-w/2;xx<=x+w/2+.01;xx+=1.1){
+  box(xx,h/2,z-w*0+h/2*0,.07,h,.07,fenceMat);
+ }
+ for(let zz=z-d/2;zz<=z+d/2+.01;zz+=1.1){
+  box(x-w/2,h/2,zz,.07,h,.07,fenceMat);
+  box(x+w/2,h/2,zz,.07,h,.07,fenceMat);
+ }
+ box(x,.45,z-d/2,w,.09,.09,fenceMat);
+ box(x,.45,z+d/2,w,.09,.09,fenceMat);
+}
+const pens={
+ turtle:{x:-27,z:-18,w:10,d:9,color:0x4c9d4b},
+ rabbit:{x:-13,z:-18,w:10,d:9,color:0xd8c4a2},
+ cat:{x:1,z:-18,w:10,d:9,color:0x9e9e9e},
+ dog:{x:15,z:-18,w:10,d:9,color:0xc88a4b},
+ monkey:{x:-27,z:3,w:10,d:9,color:0x8e6a45},
+ hippo:{x:-13,z:3,w:10,d:9,color:0x8b9aa3},
+ giraffe:{x:1,z:3,w:10,d:9,color:0xd9a93e},
+ elephant:{x:15,z:3,w:10,d:9,color:0x929ca5},
+ lion:{x:28,z:3,w:10,d:9,color:0xd99a36}
+};
+for(const p of Object.values(pens)){
+ path(p.x,p.z,p.w+.5,p.d+.5,mat(0x91cc67));
+ fence(p.x,p.z,p.w,p.d);
+}
+
+const animalColors={
+ turtle:0x398d45,rabbit:0xe8ddcb,cat:0x9a9a9a,dog:0xc58b50,
+ monkey:0x8c5c37,hippo:0x8b98a5,giraffe:0xd9a52d,
+ elephant:0x8e999f,lion:0xd18b2c
+};
+const animalNames={
+ turtle:'Kaplumbağa',rabbit:'Tavşan',cat:'Kedi',dog:'Köpek',
+ monkey:'Maymun',hippo:'Su aygırı',giraffe:'Zürafa',
+ elephant:'Fil',lion:'Aslan'
+};
+const prices={
+ turtle:100,rabbit:150,cat:200,dog:250,monkey:350,
+ hippo:500,giraffe:650,elephant:800,lion:1000
+};
+const animalGroups={};
+function makeAnimal(type,pen,count=3){
+ const group=new THREE.Group();
+ const color=animalColors[type]||0xaaaaaa;
+ for(let i=0;i<count;i++){
+  const a=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.SphereGeometry(type==='elephant'? .65:.42,12,9),mat(color));
+  body.position.y=type==='giraffe'?1.05:.55;
+  body.scale.set(1.25,1,1.55);
+  a.add(body);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(type==='elephant'?.38:.29,12,9),mat(color));
+  head.position.set(0,type==='giraffe'?2:.85,.42);
+  a.add(head);
+  if(type==='giraffe'){
+   const neck=new THREE.Mesh(new THREE.CylinderGeometry(.13,.18,.95,8),mat(color));
+   neck.position.set(0,1.45,.28);a.add(neck);
+   for(let k=0;k<5;k++){
+    const spot=new THREE.Mesh(new THREE.SphereGeometry(.08,6,5),mat(0x70461f));
+    spot.position.set((Math.random()-.5)*.25, .8+Math.random()*.9,.7);
+    a.add(spot);
+   }
+  }
+  if(type==='elephant'){
+   const ear=new THREE.Mesh(new THREE.SphereGeometry(.28,8,7),mat(color));
+   ear.position.set(-.36,.88,.35);a.add(ear);
+   const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.09,.13,.65,8),mat(color));
+   trunk.position.set(0,.52,.72);trunk.rotation.x=-.3;a.add(trunk);
+  }
+  if(type==='lion'){
+   const mane=new THREE.Mesh(new THREE.SphereGeometry(.4,10,8),mat(0x79451e));
+   mane.position.set(0,.91,.42);a.add(mane);
+  }
+  if(type==='rabbit'){
+   for(const side of [-1,1]){
+    const ear=new THREE.Mesh(new THREE.SphereGeometry(.09,7,6),mat(color));
+    ear.scale.set(.7,2.2,.7);ear.position.set(side*.13,1.22,.43);a.add(ear);
+   }
+  }
+  for(let leg=0;leg<4;leg++){
+   const l=new THREE.Mesh(new THREE.CylinderGeometry(.07,.08,.34,7),mat(color));
+   l.position.set(leg%2===0?-.22:.22,.24,leg<2?-.25:.3);a.add(l);
+  }
+  a.position.set(pen.x+(Math.random()-.5)*(pen.w-2),0,pen.z+(Math.random()-.5)*(pen.d-2));
+  a.rotation.y=Math.random()*Math.PI*2;
+  group.add(a);
+ }
+ scene.add(group);return group;
+}
+animalGroups.turtle=makeAnimal('turtle',pens.turtle,3);
+animalGroups.rabbit=makeAnimal('rabbit',pens.rabbit,3);
+
+const player=new THREE.Group();
+const body=new THREE.Mesh(new THREE.CapsuleGeometry(.35,.65,4,8),mat(0x2767d8));
+body.position.y=.75;player.add(body);
+const head=new THREE.Mesh(new THREE.SphereGeometry(.27,12,10),mat(0xffd1a2));
+head.position.y=1.35;player.add(head);
+scene.add(player);
+player.position.set(0,0,8);
+
+const visitors=[];
+const hairColors=[0x17120f,0x51331d,0xc99a4c,0xb95727];
+function makeVisitor(){
+ const g=new THREE.Group();
+ const shirtColors=[0xe85d55,0x3c77d4,0xe7bb42,0x7a4ca1,0x41a58b];
+ const shirt=mat(shirtColors[Math.floor(Math.random()*shirtColors.length)]);
+ const skin=mat(0xf1c29a);
+ const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.23,.42,3,7),shirt);
+ torso.position.y=.6;g.add(torso);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.19,9,8),skin);
+ head.position.y=1.08;g.add(head);
+ const hair=new THREE.Mesh(new THREE.SphereGeometry(.2,9,7),mat(hairColors[Math.floor(Math.random()*hairColors.length)]));
+ hair.scale.set(1,Math.random()>.5?.55:1.05,1);
+ hair.position.y=1.19;g.add(hair);
+ if(Math.random()>.5){
+  const backHair=new THREE.Mesh(new THREE.SphereGeometry(.16,8,7),mat(0x51331d));
+  backHair.scale.set(.9,1.2,.6);backHair.position.set(0,1.02,-.12);g.add(backHair);
+ }
+ for(let i=0;i<2;i++){
+  const leg=new THREE.Mesh(new THREE.CylinderGeometry(.06,.07,.35,6),mat(0x33435b));
+  leg.position.set(i===0?-.11:.11,.18,0);g.add(leg);
+ }
+ const angle=Math.random()*Math.PI*2,r=8+Math.random()*18;
+ g.position.set(Math.cos(angle)*r,0,Math.sin(angle)*r);
+ scene.add(g);
+ visitors.push({g,wait:Math.random()*4,dir:Math.random()*Math.PI*2});
+}
+for(let i=0;i<18;i++)makeVisitor();
+
+const trash=[];
+function makeTrash(){
+ const g=new THREE.Group();
+ const can=new THREE.Mesh(new THREE.CylinderGeometry(.12,.1,.25,8),mat(0xffe4a1));
+ can.position.y=.13;g.add(can);
+ const lid=new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.04,8),mat(0x637b6b));
+ lid.position.y=.27;g.add(lid);
+ g.position.set((Math.random()-.5)*34,0,(Math.random()-.5)*38);
+ if(Math.abs(g.position.x)<3&&Math.abs(g.position.z)<4)g.position.x+=6;
+ scene.add(g);trash.push(g);
+}
+for(let i=0;i<24;i++)makeTrash();
+
+const products={
+ cola:{name:'🥤 Kola',cost:10,price:18,stock:5},
+ seeds:{name:'🌻 Ay çekirdeği',cost:8,price:15,stock:5},
+ burger:{name:'🍔 Hamburger',cost:20,price:35,stock:5}
+};
+let money=500,xp=0,level=1,zoom=15;
+let salesOpen=false,kioskNear=false;
+const inventory={cola:0,seeds:0,burger:0};
+const $=id=>document.getElementById(id);
+function say(text){$('message').textContent=text;}
+function updateHUD(){
+ $('money').textContent=money;
+ $('xp').textContent=xp;
+ $('level').textContent=level;
+ $('goal').textContent=`🎯 Hedef: ${level<2?'Bir ürün satın al ve satış yap':level<3?'Yeni hayvan satın al':'Bahçeni büyüt'} · Seviye ${level}`;
+}
+function addXP(n){
+ xp+=n;
+ if(xp>=level*100){xp-=level*100;level++;money+=50;say('Seviye atladın! 50 ₺ ödül kazandın.');}
+ updateHUD();
+}
+function openMenu(force){
+ $('menuPanel').classList.toggle('open',force===undefined?!$('menuPanel').classList.contains('open'):force);
+}
+$('menuToggle').onclick=()=>openMenu();
+$('btnCloseMenu').onclick=()=>openMenu(false);
+$('btnGoal').onclick=()=>{
+ say(`Seviye ${level}: Ziyaretçilere satış yap, çöpleri topla ve yeni hayvanlar al.`);
+ openMenu(false);
+};
+$('btnZoom').onclick=()=>{
+ zoom=zoom>12?9:15;
+ say(zoom<12?'Kamera yaklaştırıldı.':'Kamera uzaklaştırıldı.');
+ openMenu(false);
+};
+$('btnKiosk').onclick=()=>{openKiosk();openMenu(false);};
+$('btnCare').onclick=care;
+$('btnSell').onclick=sellVisit;
+$('actionInteract').onclick=interact;
+$('actionClean').onclick=cleanNearby;
+document.querySelectorAll('[data-buy]').forEach(b=>{
+ b.onclick=()=>buyAnimal(b.dataset.buy);
+});
+
+function buyAnimal(type){
+ const p=pens[type];
+ if(!p){say('Bu hayvan bulunamadı.');return;}
+ if(animalGroups[type]){say('Bu hayvan zaten bahçende var.');return;}
+ if(money<prices[type]){say('Yeterli paran yok!');return;}
+ money-=prices[type];
+ animalGroups[type]=makeAnimal(type,p,3);
+ addXP(25);updateHUD();
+ say(`${animalNames[type]} satın aldın!`);
+ openMenu(false);
+}
+function care(){
+ let count=Object.keys(animalGroups).length;
+ if(!count){say('Önce hayvan satın al.');return;}
+ if(money<10){say('Bakım için 10 ₺ gerekiyor.');return;}
+ money-=10;addXP(10);
+ say('Hayvanların bakımı yapıldı. +10 XP');
+ updateHUD();
+}
+function openKiosk(){
+ $('kioskOverlay').style.display='flex';
+ renderKiosk();
+}
+$('kioskClose').onclick=()=>{$('kioskOverlay').style.display='none';};
+$('kioskOpen').onclick=()=>{
+ salesOpen=!salesOpen;
+ if(salesOpen){say('Büfe açıldı! Ziyaretçiler alışveriş yapabilir.');}
+ else say('Büfe satışa kapatıldı.');
+ renderKiosk();
+};
+function renderKiosk(){
+ const holder=$('kioskProducts');holder.innerHTML='';
+ for(const [key,p] of Object.entries(products)){
+  const card=document.createElement('div');card.className='product';
+  card.innerHTML=`<strong>${p.name}</strong><div>Alış: ${p.cost} ₺</div><div>Satış: ${p.price} ₺</div><div>Stok: ${inventory[key]}</div>`;
+  const buy=document.createElement('button');buy.textContent='5 adet al';
+  buy.onclick=()=>{
+   const total=p.cost*5;
+   if(money<total){say('Bu ürün için yeterli paran yok.');return;}
+   money-=total;inventory[key]+=5;updateHUD();renderKiosk();
+   say(`${p.name}: 5 adet stok aldın.`);
+  };
+  card.appendChild(buy);holder.appendChild(card);
+ }
+ $('kioskStock').textContent=`Stok: Kola ${inventory.cola} · Çekirdek ${inventory.seeds} · Hamburger ${inventory.burger}`;
+ $('kioskOpen').textContent=salesOpen?'🔴 Büfeyi kapat':'🟢 Büfeyi aç / satış yap';
+}
+function sellVisit(){
+ if(!salesOpen){say('Önce büfeyi aç.');openKiosk();return;}
+ const available=Object.keys(inventory).filter(k=>inventory[k]>0);
+ if(!available.length){say('Stokların bitmiş. Büfeden ürün satın al.');openKiosk();return;}
+ const key=available[Math.floor(Math.random()*available.length)];
+ inventory[key]--;money+=products[key].price;addXP(5);
+ say(`${products[key].name} satıldı! +${products[key].price} ₺`);
+ renderKiosk();updateHUD();
+}
+function interact(){
+ const d=player.position.distanceTo(new THREE.Vector3(0,0,0));
+ if(d<7){openKiosk();return;}
+ sellVisit();
+}
+function cleanNearby(){
+ let nearest=-1,dist=2.4;
+ trash.forEach((t,i)=>{
+  const d=player.position.distanceTo(t.position);
+  if(d<dist){dist=d;nearest=i;}
+ });
+ if(nearest>=0){
+  scene.remove(trash[nearest]);trash.splice(nearest,1);
+  money+=5;addXP(5);say('Çöp toplandı! +5 ₺');
+  makeTrash();updateHUD();
+ }else say('Yakınında toplanacak çöp yok.');
+}
+
+const joy=$('joystick'),stick=$('stick');
+let joyX=0,joyY=0,joyActive=false;
+function joyMove(e){
+ const r=joy.getBoundingClientRect();
+ const cx=r.left+r.width/2,cy=r.top+r.height/2;
+ const dx=e.clientX-cx,dy=e.clientY-cy;
+ const max=34,len=Math.max(1,Math.hypot(dx,dy)),scale=Math.min(1,max/len);
+ joyX=dx/Math.max(max,len);joyY=dy/Math.max(max,len);
+ stick.style.left=(r.width/2-22+dx*scale)+'px';
+ stick.style.top=(r.height/2-22+dy*scale)+'px';
+}
+joy.addEventListener('pointerdown',e=>{
+ joyActive=true;joy.setPointerCapture(e.pointerId);joyMove(e);
+});
+joy.addEventListener('pointermove',e=>{if(joyActive)joyMove(e);});
+function resetJoy(){joyActive=false;joyX=0;joyY=0;stick.style.left='29px';stick.style.top='29px';}
+joy.addEventListener('pointerup',resetJoy);
+joy.addEventListener('pointercancel',resetJoy);
+
+$('rotateButton').onclick=async()=>{
+ try{if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock('landscape');}catch(e){}
+};
+window.addEventListener('resize',()=>{
+ camera.aspect=innerWidth/innerHeight;
+ camera.updateProjectionMatrix();
+ renderer.setSize(innerWidth,innerHeight);
+ renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
+});
+
+let last=performance.now(),autoSaleTimer=0;
+function animate(now){
+ requestAnimationFrame(animate);
+ const dt=Math.min((now-last)/1000,.05);last=now;
+ if(joyX||joyY){
+  const speed=7;
+  player.position.x+=joyX*speed*dt;
+  player.position.z+=joyY*speed*dt;
+  player.position.x=THREE.MathUtils.clamp(player.position.x,-40,40);
+  player.position.z=THREE.MathUtils.clamp(player.position.z,-42,42);
+  player.rotation.y=Math.atan2(joyX,joyY);
+ }
+ const target=new THREE.Vector3(player.position.x,0,player.position.z);
+ const behind=new THREE.Vector3(
+  player.position.x+Math.sin(player.rotation.y)*zoom,
+  zoom*.65,
+  player.position.z+Math.cos(player.rotation.y)*zoom
+ );
+ camera.position.lerp(behind,.08);
+ camera.lookAt(target.x,target.y+1,target.z);
+ visitors.forEach(v=>{
+  v.wait-=dt;
+  if(v.wait<=0){v.dir+=(Math.random()-.5)*1.7;v.wait=1+Math.random()*3;}
+  v.g.position.x+=Math.sin(v.dir)*dt*.55;
+  v.g.position.z+=Math.cos(v.dir)*dt*.55;
+  if(Math.abs(v.g.position.x)>36||Math.abs(v.g.position.z)>40)v.dir+=Math.PI;
+  v.g.rotation.y=v.dir;
+ });
+ for(let i=trash.length-1;i>=0;i--){
+  if(player.position.distanceTo(trash[i].position)<.8){
+   scene.remove(trash[i]);trash.splice(i,1);
+   money+=5;addXP(5);updateHUD();
+   say('Çöp topladın! +5 ₺');
+   makeTrash();
+  }
+ }
+ autoSaleTimer+=dt;
+ if(salesOpen&&autoSaleTimer>3){
+  autoSaleTimer=0;
+  if(Math.random()<.65)sellVisit();
+ }
+ for(const group of Object.values(animalGroups)){
+  group.children.forEach((a,i)=>{a.rotation.y+=Math.sin(now*.001+i)*dt*.2;});
+ }
+ renderer.render(scene,camera);
+}
+updateHUD();
+renderKiosk();
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>
 </script>
 </body>
 </html>
